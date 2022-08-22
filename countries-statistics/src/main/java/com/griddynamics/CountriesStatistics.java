@@ -66,8 +66,8 @@ public class CountriesStatistics {
         Country maxAreaCountry = countries.stream()
             .max(compareByAreaAscending)
             .orElseThrow();
-        System.out.println("Minimum area: " + minAreaCountry.name());
-        System.out.println("Maximum area: " + maxAreaCountry.name());
+        System.out.println("Minimum area: " + minAreaCountry);
+        System.out.println("Maximum area: " + maxAreaCountry);
 
         // 3. Sort countries by continent and area in an ascending order (firstly countries are
         // sorted by continent; if countries have the same continent, they are sorted by area)
@@ -95,7 +95,7 @@ public class CountriesStatistics {
             .filter(country -> country.continent().equals(givenContinent))
             .max(compareByPopDensityAscending)
             .orElseThrow();
-        System.out.println("Maximum population density: " + maxPopDensityCountry.name());
+        System.out.println("Maximum population density: " + maxPopDensityCountry);
 
         // 5. Calculate total area of each continent
         countries.stream()

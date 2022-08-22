@@ -47,19 +47,11 @@ public class CountriesStatistics {
 
         // 1. Sort countries by population in the descending order
         countries.stream()
-            .sorted(new Comparator<Country>() {
-                public int compare(Country o1, Country o2) {
-                    return o2.population() - o1.population();
-                }
-            })
+            .sorted(Collections.reverseOrder(Comparator.comparingInt(Country::population)))
             .forEach(System.out::println);
         
         // 2. Find territories with a maximum and minimum area
-        Comparator<Country> compareByAreaAscending = new Comparator<>() {
-            public int compare(Country o1, Country o2) {
-                return o1.area() - o2.area();
-            }
-        };
+        Comparator<Country> compareByAreaAscending = Comparator.comparingInt(Country::area);
         Country minAreaCountry = countries.stream()
             .min(compareByAreaAscending)
             .orElseThrow();

@@ -15,6 +15,12 @@ import java.util.stream.Collectors;
 
 public class CountriesStatistics {
     
+    /**
+     * This program solves Countries Statistics tasks
+     * utilizing Stream API as much as possible.
+     * It takes as an parameter a path to a CSV file
+     * containing country data.
+     */
     public static void main(String[] args) {
 
         // parse arguments, get path to input file
@@ -66,12 +72,16 @@ public class CountriesStatistics {
         // 3. Sort countries by continent and area in an ascending order (firstly countries are
         // sorted by continent; if countries have the same continent, they are sorted by area)
         countries.stream()
-            .collect(Collectors.groupingBy(Country::continent))
-            .forEach((continent, list) -> {
-                list.stream()
-                    .sorted(compareByAreaAscending)
-                    .forEach(System.out::println);
-            });
+            .sorted(new Comparator<Country>() {
+                public int compare(Country o1, Country o2) {
+                    int continentComparison = o1.continent().name().compareTo(o2.continent().name());
+                    if (continentComparison != 0) {
+                        return continentComparison;
+                    }
+                    return o1.area() - o2.area();
+                }
+            })
+            .forEach(System.out::println);
         
         // 4. For a given continent find a country with a maximum population density
         // (population divided by area)

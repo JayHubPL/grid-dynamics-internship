@@ -49,7 +49,7 @@ public class CountriesStatistics {
         countries.stream()
             .sorted(new Comparator<Country>() {
                 public int compare(Country o1, Country o2) {
-                    return Long.signum(o2.population() - o1.population());
+                    return o2.population() - o1.population();
                 }
             })
             .forEach(System.out::println);
@@ -57,7 +57,7 @@ public class CountriesStatistics {
         // 2. Find territories with a maximum and minimum area
         Comparator<Country> compareByAreaAscending = new Comparator<>() {
             public int compare(Country o1, Country o2) {
-                return Long.signum(o1.area() - o2.area());
+                return o1.area() - o2.area();
             }
         };
         Country minAreaCountry = countries.stream()
@@ -102,7 +102,7 @@ public class CountriesStatistics {
             .collect(Collectors.groupingBy(Country::continent))
             .forEach((continent, list) -> {
                 long totalArea = list.stream()
-                    .collect(Collectors.summingLong(Country::area));
+                    .collect(Collectors.summingInt(Country::area));
                 System.out.println(continent + "'s total area: " + totalArea);
             });
 
@@ -112,8 +112,8 @@ public class CountriesStatistics {
             .entrySet()
             .stream()
             .filter(entry -> {
-                long totalArea = entry.getValue().stream()
-                    .collect(Collectors.summingLong(Country::area));
+                int totalArea = entry.getValue().stream()
+                    .collect(Collectors.summingInt(Country::area));
                 return totalArea > 15000000;
             })
             .map(entry -> entry.getKey())
@@ -153,8 +153,8 @@ public class CountriesStatistics {
             while (scanner.hasNext()) {
                 String name = scanner.next();
                 Continent continent = Continent.getContinentFromName(scanner.next());
-                long area = Long.parseLong(scanner.next());
-                long population = Long.parseLong(scanner.next());
+                int area = Integer.parseInt(scanner.next());
+                int population = Integer.parseInt(scanner.next());
                 countries.add(new Country(name, continent, area, population));
             }
         }

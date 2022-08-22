@@ -91,10 +91,8 @@ public class CountriesStatistics {
 
         // 5. Calculate total area of each continent
         countries.stream()
-            .collect(Collectors.groupingBy(Country::continent))
-            .forEach((continent, list) -> {
-                long totalArea = list.stream()
-                    .collect(Collectors.summingInt(Country::area));
+            .collect(Collectors.groupingBy(Country::continent, Collectors.summingInt(Country::area)))
+            .forEach((continent, totalArea) -> {
                 System.out.println(continent + "'s total area: " + totalArea);
             });
 

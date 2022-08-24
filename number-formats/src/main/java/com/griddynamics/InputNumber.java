@@ -5,12 +5,12 @@ public class InputNumber implements Comparable<InputNumber> {
     private final String stringRepresentation;
     private final double value;
 
-    InputNumber(String numberAsString) throws NumberFormatException {
+    public InputNumber(String numberAsString) throws NumberFormatException {
         this.stringRepresentation = numberAsString;
         this.value = Double.parseDouble(numberAsString);
     }
 
-    String getStringRepresentation() {
+    public String getStringRepresentation() {
         return stringRepresentation;
     }
 

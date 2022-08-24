@@ -91,14 +91,10 @@ public class CountriesStatistics {
 
         // 6. Find all continents, which have a total area greater than 15 million km2
         countries.stream()
-            .collect(Collectors.groupingBy(Country::continent))
+            .collect(Collectors.groupingBy(Country::continent, Collectors.summingInt(Country::area)))
             .entrySet()
             .stream()
-            .filter(entry -> {
-                int totalArea = entry.getValue().stream()
-                    .collect(Collectors.summingInt(Country::area));
-                return totalArea > 15000000;
-            })
+            .filter(entry -> entry.getValue() > 15000000)
             .map(entry -> entry.getKey())
             .forEach(System.out::println);
 

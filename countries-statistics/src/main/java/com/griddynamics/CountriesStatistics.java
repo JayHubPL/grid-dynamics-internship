@@ -64,15 +64,8 @@ public class CountriesStatistics {
         // 3. Sort countries by continent and area in an ascending order (firstly countries are
         // sorted by continent; if countries have the same continent, they are sorted by area)
         countries.stream()
-            .sorted(new Comparator<Country>() {
-                public int compare(Country o1, Country o2) {
-                    int continentComparison = o1.continent().name().compareTo(o2.continent().name());
-                    if (continentComparison != 0) {
-                        return continentComparison;
-                    }
-                    return o1.area() - o2.area();
-                }
-            })
+            .sorted(Comparator.comparing(Country::continent)
+                .thenComparing(Country::area))
             .forEach(System.out::println);
         
         // 4. For a given continent find a country with a maximum population density

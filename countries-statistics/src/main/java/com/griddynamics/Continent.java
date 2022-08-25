@@ -1,23 +1,23 @@
 package com.griddynamics;
 
 public enum Continent {
-    Africa,
-    Antarctica,
-    Asia,
-    Australia,
-    Europe,
-    NorthAmerica,
-    SouthAmerica;
+    AFRICA,
+    ANTARCTICA,
+    ASIA,
+    AUSTRALIA,
+    EUROPE,
+    NORTH_AMERICA,
+    SOUTH_AMERICA;
 
     public static Continent getContinentFromName(String continentName) throws InvalidContinentException {
         return switch (continentName) {
-            case "Asia" -> Continent.Asia;
-            case "Europe" -> Continent.Europe;
-            case "Africa" -> Continent.Africa;
-            case "Australia" -> Continent.Australia;
-            case "Antarctica" -> Continent.Antarctica;
-            case "North America" -> Continent.NorthAmerica;
-            case "South America" -> Continent.SouthAmerica;
+            case "Asia" -> Continent.ASIA;
+            case "Europe" -> Continent.EUROPE;
+            case "Africa" -> Continent.AFRICA;
+            case "Australia" -> Continent.AUSTRALIA;
+            case "Antarctica" -> Continent.ANTARCTICA;
+            case "North America" -> Continent.NORTH_AMERICA;
+            case "South America" -> Continent.SOUTH_AMERICA;
             default -> throw new InvalidContinentException(continentName);
         };
     }

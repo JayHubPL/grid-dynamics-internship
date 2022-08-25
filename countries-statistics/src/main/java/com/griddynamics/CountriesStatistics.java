@@ -70,7 +70,7 @@ public class CountriesStatistics {
         
         // 4. For a given continent find a country with a maximum population density
         // (population divided by area)
-        Continent givenContinent = Continent.Asia;
+        Continent givenContinent = Continent.ASIA;
         Comparator<Country> compareByPopDensityAscending =  new Comparator<Country>() {
             public int compare(Country o1, Country o2) {
                 return (int) Math.signum(o1.getDensity() - o2.getDensity());

@@ -39,7 +39,7 @@ public final class MessagesSplit {
         InputData input = parseInputFile(pathToInputFile);
 
         // generate message lines from words
-        List<String> splittedMessage = splitMessageToMaxLenLines(input.words(), input.maxLineLength());
+        List<String> splittedMessage = splitMessageWithHyphens(input.words(), input.maxLineLength());
 
         // display splitted message with line breaks
         splittedMessage.stream().forEach(System.out::println);
@@ -63,6 +63,10 @@ public final class MessagesSplit {
             System.exit(1);
         } catch (IOException ioException) {
             System.err.println(ioException.getLocalizedMessage());
+            System.exit(1);
+        }
+        if (lineMaxLength == 0) {
+            System.err.println("Maximum line lenght cannot be 0!");
             System.exit(1);
         }
         return new InputData(words, lineMaxLength);
@@ -91,6 +95,47 @@ public final class MessagesSplit {
                 currentLine.setLength(0); // clear line
             }
             currentLine.append(word + " ");
+        }
+        if (currentLine.length() != 0) {
+            splittedMessage.add(currentLine.toString().trim());
+        }
+        return splittedMessage;
+    }
+
+    /**
+     * TODO add JavaDoc
+     * @param words
+     * @param maxLineLength
+     * @return
+     * @throws InsufficientMaxLineLengthException
+     */
+    private static List<String> splitMessageWithHyphens(List<String> words, int maxLineLength)
+    throws InsufficientMaxLineLengthException {
+        for (String word : words) {
+            if (word.length() >= 3 && maxLineLength < 3) {
+                throw new InsufficientMaxLineLengthException(maxLineLength);
+            }
+        }
+        List<String> splittedMessage = new ArrayList<>();
+        StringBuilder currentLine = new StringBuilder();
+        for (String remainder : words) {
+            while (!remainder.isEmpty()) {
+                int spaceLeft = maxLineLength - currentLine.length();
+                if (remainder.length() <= spaceLeft) {
+                    currentLine.append(remainder + ' ');
+                    remainder = "";
+                } else {
+                    if (remainder.length() >= 4 && spaceLeft >= 3) {
+                        // TODO check for words with '-' in them, like "single-letter"
+                        // and split them correctly
+                        int splitIndex = Math.max(2, Math.min(remainder.length(), spaceLeft) - 1);
+                        currentLine.append(remainder.substring(0, splitIndex) + '-');
+                        remainder = remainder.substring(splitIndex);
+                    }
+                    splittedMessage.add(currentLine.toString().trim());
+                    currentLine.setLength(0);
+                }
+            }
         }
         if (currentLine.length() != 0) {
             splittedMessage.add(currentLine.toString().trim());

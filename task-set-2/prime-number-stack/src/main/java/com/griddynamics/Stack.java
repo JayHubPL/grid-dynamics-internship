@@ -1,6 +1,6 @@
 package com.griddynamics;
 
-public interface Stack<T> extends Iterable<Long> {
+public interface Stack<T> extends Iterable<T> {
 
     public void push(T elem);
 

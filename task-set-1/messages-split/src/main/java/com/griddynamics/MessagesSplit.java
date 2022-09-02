@@ -104,11 +104,17 @@ public final class MessagesSplit {
     }
 
     /**
-     * TODO add JavaDoc
-     * @param words
-     * @param maxLineLength
-     * @return
-     * @throws InsufficientMaxLineLengthException
+     * Alternative version of {@code splitMessageToMaxLenLines(List<String> words, int maxLineLength)}.
+     * <p>
+     * Generates message line by line out of {@code words} such that
+     * no line is longer than {@code maxLineLength}. Words can be split with
+     * hyphens for segments no shorter than 2 characters (excluding single-letter words).
+     * Hyphens and dashes do not contribute to the length of the segment in terms of its shortness.
+     * @param words list of words to be assembled into a message
+     * @param maxLineLength maximum line length
+     * @return {@code List<String>} message lines no longer than {@code maxLineLength}
+     * @throws InsufficientMaxLineLengthException when {@code maxLineLength} is too small to properly
+     * break longer words
      */
     private static List<String> splitMessageWithHyphens(List<String> words, int maxLineLength)
     throws InsufficientMaxLineLengthException {
@@ -151,6 +157,13 @@ public final class MessagesSplit {
         return splittedMessage;
     }
 
+    /**
+     * Splits words into parts preseving dashes in both parts, e.g. word 
+     * {@code one-liner} would be splitted into {@code one-} and {@code -liner}.
+     * Words which do not contain dashes are unchanged.
+     * @param words list of words to be splitted on dash characters
+     * @return new list of words after splitting on dash charactes
+     */
     private static List<String> splitWordsWithDashes(List<String> words) {
         words = words.stream()
             .map(word -> word.split("(?<=-)"))

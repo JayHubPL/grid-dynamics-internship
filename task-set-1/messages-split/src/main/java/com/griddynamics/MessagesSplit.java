@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class MessagesSplit {
 
@@ -111,35 +112,52 @@ public final class MessagesSplit {
      */
     private static List<String> splitMessageWithHyphens(List<String> words, int maxLineLength)
     throws InsufficientMaxLineLengthException {
-        for (String word : words) {
-            if (word.length() >= 3 && maxLineLength < 3) {
+        // check if word splitting is possible
+        if (maxLineLength < 3) {
+            if (words.stream().anyMatch(word -> word.length() >= 3)) {
                 throw new InsufficientMaxLineLengthException(maxLineLength);
             }
         }
         List<String> splittedMessage = new ArrayList<>();
         StringBuilder currentLine = new StringBuilder();
+        words = splitWordsWithDashes(words);
         for (String remainder : words) {
+            boolean startsWithDash = remainder.charAt(0) == '-';
+            boolean endsWithDash = remainder.charAt(remainder.length() - 1) == '-';
             while (!remainder.isEmpty()) {
                 int spaceLeft = maxLineLength - currentLine.length();
-                if (remainder.length() <= spaceLeft) {
-                    currentLine.append(remainder + ' ');
-                    remainder = "";
-                } else {
-                    if (remainder.length() >= 4 && spaceLeft >= 3) {
-                        // TODO check for words with '-' in them, like "single-letter"
-                        // and split them correctly
-                        int splitIndex = Math.max(2, Math.min(remainder.length(), spaceLeft) - 1);
-                        currentLine.append(remainder.substring(0, splitIndex) + '-');
-                        remainder = remainder.substring(splitIndex);
-                    }
-                    splittedMessage.add(currentLine.toString().trim());
-                    currentLine.setLength(0);
+                // words starting with dash will connect to the previous dash
+                // which, if in the same line, must be removed
+                if (startsWithDash && !currentLine.isEmpty() && spaceLeft >= 3) {
+                    currentLine.deleteCharAt(currentLine.length() - 1);
+                    spaceLeft++;
                 }
+                if (remainder.length() <= spaceLeft) { // can fit
+                    currentLine.append(remainder + (endsWithDash ? "" : " "));
+                    break; // skip to the next word
+                }
+                if (remainder.length() >= 4 && spaceLeft >= 3) { // needs splitting
+                    int splitIndex = Math.max(2, Math.min(remainder.length(), spaceLeft) - 1 - (endsWithDash ? 1 : 0));
+                    currentLine.append(remainder.substring(0, splitIndex) + '-');
+                    remainder = remainder.substring(splitIndex);
+                }
+                splittedMessage.add(currentLine.toString().trim());
+                currentLine.setLength(0);
             }
         }
         if (currentLine.length() != 0) {
             splittedMessage.add(currentLine.toString().trim());
         }
         return splittedMessage;
+    }
+
+    private static List<String> splitWordsWithDashes(List<String> words) {
+        words = words.stream()
+            .map(word -> word.split("(?<=-)"))
+            .flatMap(Arrays::stream)
+            .map(word -> '-' + word)
+            .collect(Collectors.toList());
+        words.set(0, words.get(0).substring(1));
+        return words;
     }
 }

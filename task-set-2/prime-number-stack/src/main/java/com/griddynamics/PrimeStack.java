@@ -12,6 +12,9 @@ public class PrimeStack implements Stack<Long> {
     private int capacity;
 
     public PrimeStack(int capacity) {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException(capacity);
+        }
         this.stack = new Long[capacity];
         this.capacity = capacity;
     }

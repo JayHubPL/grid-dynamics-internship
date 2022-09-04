@@ -92,5 +92,27 @@ public class PrimeStackPushTest {
 
         assertNotEquals(num, primeStack.pop());
     }
+
+    @Test
+    public void Push_StackContainsPrimesBiggerThanNewOne_ThrowException() {
+        PrimeStack primeStack = new PrimeStack(10);
+
+        primeStack.push(3L);
+
+        assertThrows(IllegalStateException.class, () -> {
+            primeStack.push(2L);
+        });
+    }
+
+    @Test
+    public void Push_StackContainsPrimeEqualToNewOne_ThrowException() {
+        PrimeStack primeStack = new PrimeStack(10);
+
+        primeStack.push(3L);
+
+        assertThrows(IllegalStateException.class, () -> {
+            primeStack.push(3L);
+        });
+    }
     
 }

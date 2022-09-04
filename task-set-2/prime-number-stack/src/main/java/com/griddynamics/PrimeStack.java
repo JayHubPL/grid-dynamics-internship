@@ -35,6 +35,11 @@ public class PrimeStack implements Stack<Long> {
         if (!isPrime(elem)) {
             throw new NumberNotPrimeException(elem);
         }
+        if (size > 0 && stack[size - 1] >= elem) {
+            throw new IllegalStateException(
+                String.format("Cannot push primes lesser or equal to the last one; last prime: %d, tried to push: %d", stack[size - 1], elem)
+            );
+        }
         stack[size] = elem;
         size++;
     }

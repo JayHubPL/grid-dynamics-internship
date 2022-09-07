@@ -3,8 +3,6 @@ package com.griddynamics;
 import java.util.Iterator;
 import java.util.stream.LongStream;
 
-import com.griddynamics.exceptions.*;
-
 public class PrimeStack implements Stack<Long> {
 
     private Long[] stack;
@@ -13,7 +11,9 @@ public class PrimeStack implements Stack<Long> {
 
     public PrimeStack(int capacity) {
         if (capacity <= 0) {
-            throw new InvalidCapacityException(capacity);
+            throw new IllegalArgumentException(
+                String.format("Stack capacity must be a positive integer, was: %d", capacity)
+            );
         }
         this.stack = new Long[capacity];
         this.capacity = capacity;
@@ -27,13 +27,15 @@ public class PrimeStack implements Stack<Long> {
     @Override
     public void push(Long elem) {
         if (elem == null) {
-            throw new PushingNullValueException();
+            throw new IllegalArgumentException("Tried to push null element");
         }
         if (size + 1 > capacity) {
-            throw new StackCapacityReachedException(capacity);
+            throw new IllegalStateException("Maximum stack capacity reached, cannot add new elements without removing");
         }
         if (!isPrime(elem)) {
-            throw new NumberNotPrimeException(elem);
+            throw new IllegalArgumentException(
+                String.format("Tried to add non-prime number: %d", elem)
+            );
         }
         if (size > 0 && stack[size - 1] >= elem) {
             throw new IllegalStateException(
@@ -47,7 +49,7 @@ public class PrimeStack implements Stack<Long> {
     @Override
     public Long pop() {
         if (size == 0) {
-            throw new StackEmptyException();
+            throw new IllegalStateException("Tried to pop from an empty stack");
         }
         size--;
         return stack[size];
@@ -56,7 +58,7 @@ public class PrimeStack implements Stack<Long> {
     @Override
     public Long peek() {
         if (size == 0) {
-            throw new StackEmptyException();
+            throw new IllegalStateException("Tried to peek into an empty stack");
         }
         return stack[size - 1];
     }

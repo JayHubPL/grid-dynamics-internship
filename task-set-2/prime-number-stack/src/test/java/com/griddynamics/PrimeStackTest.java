@@ -9,20 +9,18 @@ import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Test;
 
-import com.griddynamics.exceptions.InvalidCapacityException;
-
 public class PrimeStackTest {
     
     @Test
     public void PrimeStack_NegativeCapacityGiven_ThrowException() {
-        assertThrows(InvalidCapacityException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new PrimeStack(-1);
         });
     }
 
     @Test
     public void PrimeStack_ZeroCapacityGiven_ThrowException() {
-        assertThrows(InvalidCapacityException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             new PrimeStack(0);
         });
     }

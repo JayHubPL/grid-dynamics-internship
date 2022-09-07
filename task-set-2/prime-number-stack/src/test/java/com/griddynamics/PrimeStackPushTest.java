@@ -6,10 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.*;
 
-import com.griddynamics.exceptions.NumberNotPrimeException;
-import com.griddynamics.exceptions.PushingNullValueException;
-import com.griddynamics.exceptions.StackCapacityReachedException;
-
 public class PrimeStackPushTest {
     
     @Test
@@ -20,7 +16,7 @@ public class PrimeStackPushTest {
         primeStack.push(3L);
         primeStack.push(5L);
 
-        assertThrows(StackCapacityReachedException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             primeStack.push(7L);
         });
     }
@@ -29,11 +25,11 @@ public class PrimeStackPushTest {
     public void Push_ZeroAndPositiveOne_ThrowException() {
         PrimeStack primeStack = new PrimeStack(3);
 
-        assertThrows(NumberNotPrimeException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             primeStack.push(0L);
         });
 
-        assertThrows(NumberNotPrimeException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             primeStack.push(1L);
         });
     }
@@ -42,7 +38,7 @@ public class PrimeStackPushTest {
     public void Push_NegativeNumber_ThrowException() {
         PrimeStack primeStack = new PrimeStack(3);
 
-        assertThrows(NumberNotPrimeException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             primeStack.push(-1L);
         });
     }
@@ -62,7 +58,7 @@ public class PrimeStackPushTest {
     public void Push_NullValue_ThrowException() {
         PrimeStack primeStack = new PrimeStack(3);
 
-        assertThrows(PushingNullValueException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             primeStack.push(null);
         });
     }

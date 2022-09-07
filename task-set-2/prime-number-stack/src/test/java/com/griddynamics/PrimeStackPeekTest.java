@@ -6,15 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import com.griddynamics.exceptions.StackEmptyException;
-
 public class PrimeStackPeekTest {
     
     @Test
     public void Peek_StackIsEmpty_ThrowException() {
         PrimeStack primeStack = new PrimeStack(3);
 
-        assertThrows(StackEmptyException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             primeStack.peek();
         });
     }
@@ -60,7 +58,7 @@ public class PrimeStackPeekTest {
         assertEquals(2L, primeStack.peek());
 
         primeStack.pop();
-        assertThrows(StackEmptyException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> {
             primeStack.peek();
         });
     }

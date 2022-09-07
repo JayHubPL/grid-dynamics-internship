@@ -63,9 +63,10 @@ public class PrimeStackIteratorTest {
         primeStack.push(5L);
 
         int iterations = 0;
+        long[] primesToPush = new long[]{7L, 11L, 13L};
         for (Iterator<Long> iter = primeStack.iterator(); iter.hasNext(); iterations++) {
             iter.next();
-            primeStack.push(2L);
+            primeStack.push(primesToPush[iterations]);
         }
 
         assertEquals(6, primeStack.size());

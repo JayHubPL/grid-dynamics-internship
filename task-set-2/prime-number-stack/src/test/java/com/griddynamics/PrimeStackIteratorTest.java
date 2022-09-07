@@ -71,4 +71,20 @@ public class PrimeStackIteratorTest {
         assertEquals(6, primeStack.size());
         assertEquals(3, iterations);
     }
+
+    @Test
+    public void Iterator_HasNextDoesNotChangeInternalState() {
+        PrimeStack primeStack = new PrimeStack(10);
+
+        primeStack.push(2L);
+
+        Iterator<Long> primeStackIterator = primeStack.iterator();
+
+        primeStackIterator.hasNext();
+        primeStackIterator.hasNext();
+        primeStackIterator.hasNext();
+
+        assertTrue(primeStackIterator.hasNext());
+        assertEquals(2L, primeStackIterator.next());
+    }
 }

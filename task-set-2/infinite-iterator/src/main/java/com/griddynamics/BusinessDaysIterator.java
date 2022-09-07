@@ -11,7 +11,7 @@ public class BusinessDaysIterator implements Iterator<LocalDate> {
     // starting date is non-inclusive
     public BusinessDaysIterator(LocalDate startingDate) {
         if (startingDate == null) {
-            throw new InvalidStartingDateException();
+            throw new IllegalArgumentException("startingDate cannot be null");
         }
         date = startingDate;
     }

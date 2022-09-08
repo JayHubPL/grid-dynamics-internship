@@ -1,19 +1,18 @@
 package com.griddynamics;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 
 public class FlatteningIterator<T> implements Iterator<T> {
 
-    private final Iterator<Collection<T>> collectionsIterator;
+    private final Iterator<Iterator<T>> iterators;
     private Iterator<T> currentCollectionIterator;
 
     @SafeVarargs
-    public FlatteningIterator(Collection<T>... collections) {
-        this.collectionsIterator = Arrays.asList(collections).iterator();
-        if (collectionsIterator.hasNext()) {
-            this.currentCollectionIterator = collectionsIterator.next().iterator();
+    public FlatteningIterator(Iterator<T>... iterators) {
+        this.iterators = Arrays.asList(iterators).iterator();
+        if (this.iterators.hasNext()) {
+            this.currentCollectionIterator = this.iterators.next();
         } else {
             throw new IllegalArgumentException("Not enough parameters provided, must be at least one");
         }
@@ -21,13 +20,13 @@ public class FlatteningIterator<T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-        return currentCollectionIterator.hasNext() || collectionsIterator.hasNext();
+        return currentCollectionIterator.hasNext() || iterators.hasNext();
     }
 
     @Override
     public T next() {
-        while (!currentCollectionIterator.hasNext() && collectionsIterator.hasNext()) {
-            currentCollectionIterator = collectionsIterator.next().iterator();
+        while (!currentCollectionIterator.hasNext() && iterators.hasNext()) {
+            currentCollectionIterator = iterators.next();
         }
         return currentCollectionIterator.next();        
     }

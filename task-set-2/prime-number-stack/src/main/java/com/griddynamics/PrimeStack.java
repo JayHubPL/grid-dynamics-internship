@@ -27,8 +27,7 @@ public class PrimeStack implements Stack<Long> {
     @Override
     public void push(Long elem) {
         validatePushInput(elem);
-        stack[size] = elem;
-        size++;
+        stack[size++] = elem;
     }
 
     @Override

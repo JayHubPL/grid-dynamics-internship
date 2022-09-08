@@ -2,6 +2,7 @@ package com.griddynamics;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
@@ -84,5 +85,23 @@ public class BufferingIteratorTest {
         assertIterableEquals(List.of(4), bufferingIterator.next());
         
         assertFalse(bufferingIterator.hasNext());
+    }
+
+    @Test
+    public void BufferingIterator_GivenNullIterator_ThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BufferingIterator<>(null, 1);
+        });
+    }
+
+    @Test
+    public void BufferingIterator_GivenNonPositiveBatchSize_ThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BufferingIterator<>(Collections.emptyIterator(), 0);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BufferingIterator<>(Collections.emptyIterator(), -1);
+        });
     }
 }

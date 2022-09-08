@@ -26,22 +26,7 @@ public class PrimeStack implements Stack<Long> {
 
     @Override
     public void push(Long elem) {
-        if (elem == null) {
-            throw new IllegalArgumentException("Tried to push null element");
-        }
-        if (size + 1 > capacity) {
-            throw new IllegalStateException("Maximum stack capacity reached, cannot add new elements without removing");
-        }
-        if (!isPrime(elem)) {
-            throw new IllegalArgumentException(
-                String.format("Tried to add non-prime number: %d", elem)
-            );
-        }
-        if (size > 0 && stack[size - 1] >= elem) {
-            throw new IllegalStateException(
-                String.format("Cannot push primes lesser or equal to the last one; last prime: %d, tried to push: %d", stack[size - 1], elem)
-            );
-        }
+        validatePushInput(elem);
         stack[size] = elem;
         size++;
     }
@@ -66,6 +51,30 @@ public class PrimeStack implements Stack<Long> {
     @Override
     public int size() {
         return size;
+    }
+
+    private void validatePushInput(Long elem) {
+        if (elem == null) {
+            throw new IllegalArgumentException("Tried to push null element");
+        }
+        if (size + 1 > capacity) {
+            throw new IllegalStateException(
+                "Maximum stack capacity reached, cannot add new elements without removing"
+            );
+        }
+        if (!isPrime(elem)) {
+            throw new IllegalArgumentException(
+                String.format("Tried to add non-prime number: %d", elem)
+            );
+        }
+        if (size > 0 && stack[size - 1] >= elem) {
+            throw new IllegalStateException(
+                String.format(
+                    "Cannot push primes lesser or equal to the last one; last prime: %d, tried to push: %d",
+                    stack[size - 1], elem
+                )
+            );
+        }
     }
 
     private boolean isPrime(long num) {

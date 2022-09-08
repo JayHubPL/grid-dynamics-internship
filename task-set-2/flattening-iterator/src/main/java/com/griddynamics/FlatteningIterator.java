@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class FlatteningIterator<T> implements Iterator<T> {
 
@@ -12,7 +13,7 @@ public class FlatteningIterator<T> implements Iterator<T> {
 
     @SafeVarargs
     public FlatteningIterator(Iterator<T>... iterators) {
-        this.iterators = Arrays.asList(iterators).iterator();
+        this.iterators = filterOutEmptyIterators(Arrays.asList(iterators)).iterator();
         currentIterator = Collections.emptyIterator();
         if (this.iterators.hasNext()) {
             currentIterator = this.iterators.next();
@@ -23,7 +24,7 @@ public class FlatteningIterator<T> implements Iterator<T> {
         if (iterators == null) {
             throw new IllegalArgumentException("Collection of iterators cannot be null");
         }
-        this.iterators = iterators.iterator();
+        this.iterators = filterOutEmptyIterators(iterators).iterator();
         currentIterator = Collections.emptyIterator();
         if (this.iterators.hasNext()) {
             this.currentIterator = this.iterators.next();
@@ -40,7 +41,13 @@ public class FlatteningIterator<T> implements Iterator<T> {
         while (!currentIterator.hasNext() && iterators.hasNext()) {
             currentIterator = iterators.next();
         }
-        return currentIterator.next();        
+        return currentIterator.next();
+    }
+
+    private Collection<Iterator<T>> filterOutEmptyIterators(Collection<Iterator<T>> iterators) {
+        return iterators.stream()
+            .filter(Iterator::hasNext)
+            .collect(Collectors.toList());
     }
     
 }

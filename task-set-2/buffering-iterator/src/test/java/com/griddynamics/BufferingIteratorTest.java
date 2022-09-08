@@ -13,6 +13,22 @@ import org.junit.jupiter.api.Test;
 public class BufferingIteratorTest {
     
     @Test
+    public void HasNext_DoesNotChangeInternalState() {
+        int batchSize = 10;
+        List<Integer> singleElementList = List.of(1);
+        Iterator<Integer> iterator = singleElementList.iterator();
+
+        BufferingIterator<Integer> bufferingIterator = new BufferingIterator<>(iterator, batchSize);
+
+        bufferingIterator.hasNext();
+        bufferingIterator.hasNext();
+        bufferingIterator.hasNext();
+
+        assertTrue(bufferingIterator.hasNext());
+        assertIterableEquals(singleElementList, bufferingIterator.next());
+    }
+
+    @Test
     public void HasNext_GivenEmptyIterator_HasNextIsFalse() {
         int batchSize = 10;
         Iterator<Object> iterator = Collections.emptyList().iterator();

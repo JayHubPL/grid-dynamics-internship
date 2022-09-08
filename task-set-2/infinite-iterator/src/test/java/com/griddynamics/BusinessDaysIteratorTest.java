@@ -2,6 +2,7 @@ package com.griddynamics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DayOfWeek;
@@ -87,5 +88,12 @@ public class BusinessDaysIteratorTest {
 
         assertTrue(businessDayIterator.hasNext());
         assertEquals(nextBusinessDay, businessDayIterator.next());
+    }
+
+    @Test
+    public void BusinessDaysIterator_GivenNullStartingDate_ThrowException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BusinessDaysIterator(null);
+        });
     }
 }

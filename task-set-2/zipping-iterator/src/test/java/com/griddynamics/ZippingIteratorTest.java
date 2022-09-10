@@ -1,5 +1,6 @@
 package com.griddynamics;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -61,18 +62,21 @@ public class ZippingIteratorTest {
 
     @Test
     public void ZippingFunction_GivenNullParameters_ThrowException() {
+        Iterator<Integer> emptyIterator = Collections.emptyIterator();
         BiFunction<Integer, Integer, Integer> zippingFunction = (a, b) -> a + b;
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ZippingIterator<>(null, Collections.emptyIterator(), zippingFunction);
-        });
+        assertAll(
+            () -> assertThrows(IllegalArgumentException.class, () -> {
+                new ZippingIterator<>(null, emptyIterator, zippingFunction);
+            }),
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ZippingIterator<>(Collections.emptyIterator(), null, zippingFunction);
-        });
+            () -> assertThrows(IllegalArgumentException.class, () -> {
+                new ZippingIterator<>(emptyIterator, null, zippingFunction);
+            }),
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new ZippingIterator<>(null, null, null);
-        });
+            () -> assertThrows(IllegalArgumentException.class, () -> {
+                new ZippingIterator<>(emptyIterator, emptyIterator, null);
+            })
+        );
     }
 }

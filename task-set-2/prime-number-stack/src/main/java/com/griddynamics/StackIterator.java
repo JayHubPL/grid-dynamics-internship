@@ -20,8 +20,7 @@ public class StackIterator<T> implements Iterator<T> {
 
     @Override
     public T next() {
-        topIndex--;
-        return stackSnapshot[topIndex + 1];
+        return stackSnapshot[topIndex--];
     }
 
 }

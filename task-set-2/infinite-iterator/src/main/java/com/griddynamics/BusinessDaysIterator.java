@@ -23,16 +23,7 @@ public class BusinessDaysIterator implements Iterator<LocalDate> {
 
     @Override
     public boolean hasNext() {
-        try {
-            getNextBusinessDay(date);
-        } catch (DateTimeException dateTimeException) {
-            /* 
-             * This exception is thrown and caught if and only if the next
-             * business day exceeds LocalDate.MAX value.
-             */
-            return false;
-        }
-        return true;
+        return date.compareTo(LocalDate.MAX) < 0;
     }
 
     @Override

@@ -77,7 +77,7 @@ public class PrimeStack implements Stack<Long> {
     }
 
     private boolean isPrime(long num) {
-        return num > 1 && LongStream.rangeClosed(2, (long) Math.sqrt(num)).noneMatch(n -> num % n == 0);
+        return num > 1 && LongStream.rangeClosed(2, (long) Math.sqrt(num)).noneMatch(divisor -> num % divisor == 0);
     }
 
 }

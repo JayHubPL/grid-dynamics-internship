@@ -10,6 +10,7 @@
     <junit.version>5.6.0</junit.version>
     <log4j.version>2.18.0</log4j.version>
     <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+    <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -47,6 +48,18 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin.version}</version>
+        <configuration>
+            <mainClass>com.griddynamics.Main</mainClass>
+            <arguments>
+              <argument>token.txt</argument>
+              <argument>src/main/resources/data.json</argument>
+          </arguments>
+        </configuration>
+    </plugin>
     </plugins>
   </build>
 </project>

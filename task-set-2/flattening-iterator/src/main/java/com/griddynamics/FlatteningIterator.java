@@ -13,11 +13,7 @@ public class FlatteningIterator<T> implements Iterator<T> {
 
     @SafeVarargs
     public FlatteningIterator(Iterator<T>... iterators) {
-        this.iterators = filterOutEmptyIterators(Arrays.asList(iterators)).iterator();
-        currentIterator = Collections.emptyIterator();
-        if (this.iterators.hasNext()) {
-            currentIterator = this.iterators.next();
-        }
+        this(Arrays.asList(iterators));
     }
 
     public FlatteningIterator(Collection<Iterator<T>> iterators) {

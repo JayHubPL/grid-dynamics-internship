@@ -18,4 +18,9 @@ public class Connection {
         return destination;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s -> %s", origin, destination);
+    }
+
 }

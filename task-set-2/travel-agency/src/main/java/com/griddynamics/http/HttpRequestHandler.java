@@ -13,6 +13,11 @@ import java.net.http.HttpTimeoutException;
 import java.nio.file.Path;
 import java.time.Duration;
 
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,42 +44,51 @@ public class HttpRequestHandler {
         HttpRequest request = buildHttpRequest(connection);
         HttpResponse<String> response = null;
         BigDecimal price = null;
+        int requestAttemptsLeft = 3;
 
-        while (response == null || response.statusCode() != ResponseStatus.OK.getStatusCode() || price == null) {
+        while (requestAttemptsLeft > 0 && (response == null || response.statusCode() != HTTP_OK || price == null)) {
             try {
                 response = sendRequest(request);
-                switch (ResponseStatus.mapStatusCodeToEnum(response.statusCode())) {
-                    case OK -> {
-                        logger.info("Response recieved successfully");
+                int statusCode = response.statusCode();
+                switch (statusCode) {
+                    case HTTP_OK -> {
+                        logger.info("Response received successfully");
                         price = new Gson().fromJson(response.body(), ResponseBody.class).price();
                         if (price == null) {
-                            logger.warn("Price is null, retrying sending request...");
+                            logger.warn("Price is null");
                         } else {
-                            logger.info(String.format("Recieved valid price: %s", price));
+                            logger.info(String.format("Received valid price: %s", price));
                         }
                     } 
-                    case UNAUTHORIZED -> {
+                    case HTTP_UNAUTHORIZED -> {
                         throw logger.throwing(Level.FATAL, new InvalidTokenException(token));
                     }
-                    case BAD_REQUEST -> {
-                        logger.warn(String.format("Bad request status code recieved: %d, retrying sending request...", response.statusCode())); // TODO
+                    case HTTP_BAD_REQUEST -> {
+                        logger.warn(String.format("Bad request status code received: %d", statusCode));
                     }
-                    case SERVICE_DOWN -> {
-                        logger.warn("Service is down, retrying sending request...");
+                    case HTTP_UNAVAILABLE -> {
+                        logger.warn("Service is down");
                     }
-                    case UNKNOWN -> {
-                        logger.warn(String.format("Unknown request status code: %d, retrying sending request...", response.statusCode()));
+                    default -> {
+                        logger.warn(String.format("Unknown request status code: %d", statusCode));
                     }
                 }
             } catch (InterruptedException interruptedException) {
-                logger.warn("Sending the request was interrupted, retrying sending request...");
+                logger.warn("Sending the request was interrupted");
             } catch (HttpTimeoutException httpTimeoutException) {
-                logger.warn("Request timed out, retrying sending request...");
+                logger.warn("Request timed out");
             } catch (JsonSyntaxException jsonSyntaxException) {
-                logger.warn("Response is not a valid json, retrying sending request...");
+                logger.warn("Response is not a valid json");
             } catch (IOException ioException) {
                 throw logger.throwing(Level.FATAL, ioException);
             }
+            if (price == null && requestAttemptsLeft > 0) {
+                requestAttemptsLeft--;
+                logger.info(String.format("Retrying sending the request. Attempts left: %d", requestAttemptsLeft));
+            }
+        }
+        if (price == null) {
+            throw logger.throwing(Level.FATAL, new NoValidResponseException(connection));
         }
         return price;
     }

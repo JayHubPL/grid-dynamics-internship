@@ -8,8 +8,8 @@ public class DatabaseRecord {
     private String destinationCode;
 
     public Connection mapToConnection() {
-        City originCity = new City(origin, originCode);
-        City destinationCity = new City(destination, destinationCode);
+        Airport originCity = new Airport(origin, originCode);
+        Airport destinationCity = new Airport(destination, destinationCode);
         return new Connection(originCity, destinationCity);
     }
 

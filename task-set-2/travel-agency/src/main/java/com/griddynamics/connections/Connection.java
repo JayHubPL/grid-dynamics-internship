@@ -2,19 +2,19 @@ package com.griddynamics.connections;
 
 public class Connection {
 
-    private City origin;
-    private City destination;
+    private Airport origin;
+    private Airport destination;
 
-    public Connection(City origin, City destination) {
+    public Connection(Airport origin, Airport destination) {
         this.origin = origin;
         this.destination = destination;
     }
 
-    public City origin() {
+    public Airport origin() {
         return origin;
     }
 
-    public City destination() {
+    public Airport destination() {
         return destination;
     }
 

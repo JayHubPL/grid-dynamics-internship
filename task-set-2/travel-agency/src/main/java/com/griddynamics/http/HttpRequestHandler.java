@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,43 +18,46 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.griddynamics.connections.Connection;
-import com.griddynamics.ui.UserInterface;
 
 public class HttpRequestHandler {
     
     private final URI lambdaUri;
     private final String token;
     private final Duration timeout;
-    private Logger logger;
+    private final Logger logger;
 
-    public HttpRequestHandler(Path tokenPath) {
+    public HttpRequestHandler(Path tokenPath) throws IOException, FileNotFoundException {
+        logger = LogManager.getLogger(HttpRequestHandler.class);
         lambdaUri = URI.create("https://34wrh7kcoe3dwrggfw7ulm4tyq0htvgs.lambda-url.eu-west-2.on.aws/");
         token = readTokenFromFile(tokenPath);
         timeout = Duration.ofSeconds(10);
-        logger = LogManager.getLogger(HttpRequestHandler.class); // TODO this can be null
     }
 
-    public double makePriceRequest(Connection connection) {
+    public BigDecimal makePriceRequest(Connection connection) throws InvalidTokenException, IOException {
         HttpRequest request = buildHttpRequest(connection);
         HttpResponse<String> response = null;
+        BigDecimal price = null;
 
-        while (response == null || response.statusCode() != ResponseStatus.OK.getStatusCode()) {
+        while (response == null || response.statusCode() != ResponseStatus.OK.getStatusCode() || price == null) {
             try {
                 response = sendRequest(request);
                 switch (ResponseStatus.mapStatusCodeToEnum(response.statusCode())) {
                     case OK -> {
                         logger.info("Response recieved successfully");
+                        price = new Gson().fromJson(response.body(), ResponseBody.class).price();
+                        if (price == null) {
+                            logger.warn("Price is null, retrying sending request...");
+                        } else {
+                            logger.info(String.format("Recieved valid price: %s", price));
+                        }
                     } 
                     case UNAUTHORIZED -> {
-                        logger.fatal("Authorization not acquired, invalid token");
-                        UserInterface.showMsg("API token is invalid and/or does not give neccesary authorization level. Please check the token and restart the application.");
-                        System.exit(-1);
+                        throw logger.throwing(Level.FATAL, new InvalidTokenException(token));
                     }
-                    case BAD_REQUEST -> { // this behaviour may change
-                        logger.fatal("Bad request status code recieved");
-                        UserInterface.showMsg("Application has encountered irrecoverable error and will now exit.");
-                        System.exit(-1);
+                    case BAD_REQUEST -> {
+                        logger.warn(String.format("Bad request status code recieved: %d, retrying sending request...", response.statusCode())); // TODO
                     }
                     case SERVICE_DOWN -> {
                         logger.warn("Service is down, retrying sending request...");
@@ -64,16 +68,15 @@ public class HttpRequestHandler {
                 }
             } catch (InterruptedException interruptedException) {
                 logger.warn("Sending the request was interrupted, retrying sending request...");
-            } catch (HttpTimeoutException httpTimeoutException){
+            } catch (HttpTimeoutException httpTimeoutException) {
                 logger.warn("Request timed out, retrying sending request...");
+            } catch (JsonSyntaxException jsonSyntaxException) {
+                logger.warn("Response is not a valid json, retrying sending request...");
             } catch (IOException ioException) {
-                logger.catching(Level.FATAL, ioException);
-                UserInterface.showMsg("Application has encountered irrecoverable error and will now exit.");
-                System.exit(-1);
+                throw logger.throwing(Level.FATAL, ioException);
             }
         }
-
-        return new Gson().fromJson(response.body(), ResponseBody.class).price();
+        return price;
     }
 
     private HttpRequest buildHttpRequest(Connection connection) {
@@ -89,14 +92,15 @@ public class HttpRequestHandler {
         return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private String readTokenFromFile(Path path) {
+    private String readTokenFromFile(Path path) throws IOException, FileNotFoundException {
         String token = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             token = reader.readLine().trim();
-        } catch (FileNotFoundException fileNotFoundException){
-            System.err.println(fileNotFoundException.getMessage());
-        } catch (IOException ioException) { // TODO token.txt might not exist or data is invalid
-
+        } catch (FileNotFoundException fileNotFoundException) {
+            logger.fatal("No token file found");
+            throw logger.throwing(Level.FATAL, fileNotFoundException);
+        } catch (IOException ioException) {
+            throw logger.throwing(Level.FATAL, ioException);
         }
         return token;
     }

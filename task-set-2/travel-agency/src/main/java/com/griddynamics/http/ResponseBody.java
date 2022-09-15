@@ -1,10 +1,12 @@
 package com.griddynamics.http;
 
+import java.math.BigDecimal;
+
 public class ResponseBody {
 
-    private double price;
+    private BigDecimal price;
 
-    public double price() {
+    public BigDecimal price() {
         return price;
     }
 

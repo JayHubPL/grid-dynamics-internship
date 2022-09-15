@@ -4,17 +4,17 @@
     	<!-- Console appender configuration -->
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout
-                pattern="%d{HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+                pattern="%d{HH:mm:ss.SSS} %-5p %c{1}:%L - %m%n" />
         </Console>
         <!-- File appender configuration -->
         <File name="fout" fileName="logs.log" append="true">
             <PatternLayout
-                pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+                pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %c{1}:%L - %m%n" />
         </File>
     </Appenders>
     <Loggers>
-        <Root level="info" additivity="false">
-            <AppenderRef ref="console" />
+        <Root level="error">
+            <!-- <AppenderRef ref="console" /> -->
             <AppenderRef ref="fout" />
         </Root>
     </Loggers>

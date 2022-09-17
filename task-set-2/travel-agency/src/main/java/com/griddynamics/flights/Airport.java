@@ -1,4 +1,4 @@
-package com.griddynamics.connections;
+package com.griddynamics.flights;
 
 public class Airport implements Comparable<Airport> {
 

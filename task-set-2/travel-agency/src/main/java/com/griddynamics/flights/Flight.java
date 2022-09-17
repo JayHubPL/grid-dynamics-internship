@@ -1,11 +1,11 @@
-package com.griddynamics.connections;
+package com.griddynamics.flights;
 
-public class Connection {
+public class Flight {
 
     private Airport origin;
     private Airport destination;
 
-    public Connection(Airport origin, Airport destination) {
+    public Flight(Airport origin, Airport destination) {
         this.origin = origin;
         this.destination = destination;
     }
@@ -20,7 +20,7 @@ public class Connection {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", origin, destination);
+        return String.format("from %s to %s", origin, destination);
     }
 
 }

@@ -1,13 +1,13 @@
 package com.griddynamics.http;
 
-import com.griddynamics.connections.Connection;
+import com.griddynamics.flights.Flight;
 
 public class NoValidResponseException extends RuntimeException {
 
     private final String msg;
 
-    public NoValidResponseException(Connection connection) {
-        msg = String.format("Failed to receive valid response for connection %s", connection);
+    public NoValidResponseException(Flight flight) {
+        msg = String.format("Failed to receive valid response for flight %s", flight);
     }
 
     @Override

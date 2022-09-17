@@ -1,15 +1,12 @@
 package com.griddynamics;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Path;
 import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
-import com.griddynamics.connections.Airport;
-import com.griddynamics.connections.Connection;
-import com.griddynamics.connections.ConnectionDatabase;
+import com.griddynamics.flights.Airport;
+import com.griddynamics.flights.Flight;
+import com.griddynamics.flights.FlightDatabase;
 import com.griddynamics.http.HttpRequestHandler;
 import com.griddynamics.http.InvalidTokenException;
 import com.griddynamics.ui.UserInterface;
@@ -18,17 +15,17 @@ import com.robustsoft.currencies.Currency;
 
 public class TravelAgencyClient {
     
-    private final ConnectionDatabase connectionDB;
+    private final FlightDatabase connectionDB;
     private final HttpRequestHandler httpRequestHandler;
     private final UserInterface UI;
 
-    public TravelAgencyClient(UserInterface UI, Path databasePath, Path tokenPath) throws IOException, JsonSyntaxException, FileNotFoundException {
+    public TravelAgencyClient(UserInterface UI, FlightDatabase connectionDB, HttpRequestHandler httpRequestHandler) {
         this.UI = UI;
-        connectionDB = new ConnectionDatabase(databasePath);
-        httpRequestHandler = new HttpRequestHandler(tokenPath);
+        this.connectionDB = connectionDB;
+        this.httpRequestHandler = httpRequestHandler;
     }
 
-    public void run() throws InvalidTokenException, IOException {
+    public void runApplication() throws InvalidTokenException, IOException {
         UI.showMsg("Welcome to Flight Price Checker!");
 
         boolean shouldExitProgram = false;
@@ -49,7 +46,7 @@ public class TravelAgencyClient {
             Airport destination = UI.requestElementFromList(destinations, "Choose your destination:");
 
             UI.showMsg("Checking the price...");
-            BigDecimal price = httpRequestHandler.makePriceRequest(new Connection(origin, destination));
+            BigDecimal price = httpRequestHandler.makePriceRequest(new Flight(origin, destination));
 
             Currency currency = UI.requestCurrency();
             UI.showMsg(String.format("The price of the flight from %s to %s is %s", origin, destination, currency.of(price)));

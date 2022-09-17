@@ -2,27 +2,42 @@ package com.griddynamics;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.griddynamics.flights.FlightDatabase;
+import com.griddynamics.http.HttpRequestHandler;
 import com.griddynamics.http.InvalidTokenException;
 import com.griddynamics.ui.UserInterface;
+import com.griddynamics.utils.FileParser;
 
 public class Main {
     
     public static void main(String[] args) {
         UserInterface UI = new UserInterface();
+        Gson gson = new Gson();
 
         if (args.length == 0) {
-            UI.showMsg("No database file was provided. Please provide a path to the file containing connection information.");
+            UI.showMsg("No database file was provided. Please provide a path to the file containing flights information.");
             System.exit(-1);
         }
 
         try {
             Path databasePath = Path.of(args[0]);
             Path tokenPath = args.length > 1 ? Path.of(args[1]) : Path.of("token.txt");
-            new TravelAgencyClient(UI, databasePath, tokenPath).run();
+            
+            String token = FileParser.parseTokenFile(tokenPath);
+
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequestHandler httpRequestHandler = new HttpRequestHandler(httpClient, token, gson);
+            FlightDatabase flightDB = new FlightDatabase(databasePath, gson);
+
+            TravelAgencyClient travelAgencyClient = new TravelAgencyClient(UI, flightDB, httpRequestHandler);
+            travelAgencyClient.runApplication();
+
             System.exit(0);
         } catch (InvalidPathException invalidPathException) {
             UI.showMsg(String.format("Provided path is invalid: %s. Please provide a valid path.", args[0]));
@@ -41,5 +56,5 @@ public class Main {
         }
 
         System.exit(-1);
-    }  
+    }
 }

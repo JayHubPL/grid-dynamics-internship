@@ -1,6 +1,8 @@
 package com.griddynamics.ui;
 
-import java.io.Console;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -11,55 +13,69 @@ import com.robustsoft.currencies.Currency;
 
 public class UserInterface {
 
-    private final Console console;
+    private final BufferedReader input;
+    private final PrintWriter output;
+
+    public UserInterface(BufferedReader input, PrintWriter output) {
+        this.input = input;
+        this.output = output;
+    }
 
     public UserInterface() {
-        console = System.console();
+        this(new BufferedReader(System.console().reader()), System.console().writer());
     }
     
-    public void showMsg(String msg) {
-        console.printf("%s\n", msg);
+    public void showMsg(String msg, boolean withoutNewLine) {
+        output.printf(withoutNewLine ? "%s" : "%s\n", msg);
+        output.flush();
     }
 
-    public String requestOriginCityName() {
+    public void showMsg(String msg) {
+        showMsg(msg, false);
+    }
+
+    public String requestOriginCityName() throws IOException {
         String prompt = "Please enter your origin city name: ";
-        String cityName = console.readLine(prompt).trim();
-        console.flush();
+        String cityName = readInputWithPrompt(prompt);
         return cityName;
     }
 
-    public <T extends Comparable<T>> T requestElementFromList(List<T> list, String prompt) {
+    public <T extends Comparable<T>> T requestElementFromList(List<T> list, String prompt) throws IOException {
         showMsg(prompt);
         list.sort(Comparator.naturalOrder());
         IntStream.range(0, list.size())
             .mapToObj(i -> String.format("%4d. %s", i + 1, list.get(i)))
-            .forEach(System.out::println);
+            .forEach(i -> showMsg(i));
         String indexInfo = String.format("Choose index from range 1 to %d: ", list.size());
         Integer index = null;
         while (index == null || index < 1 || index > list.size()) {
             try {
-                index = Integer.valueOf(console.readLine(indexInfo).trim());
+                index = Integer.valueOf(readInputWithPrompt(indexInfo));
                 if (index < 1 || index > list.size()) {
                     showMsg("Index is not from specified range. Please try again.");
                 }
             } catch (NumberFormatException numberFormatException) {
                 showMsg("Index is invalid. Please try again.");
             }
-            console.flush();
         }
         return list.get(index - 1);
     }
 
-    public boolean askIfWantsToExit() {
-        String yes = "Yes, check another connection.";
+    public boolean askIfWantsToExit() throws IOException {
+        String yes = "Yes, check another flight.";
         String no = "No, exit the program.";
         List<String> options = Arrays.asList(yes, no);
         return requestElementFromList(options, "Do you wish to continue?").equals(no);
     }
 
-    public Currency requestCurrency() {
+    public Currency requestCurrency() throws IOException {
         LinkedList<Currency> currencies = new LinkedList<>(Arrays.asList(Currency.values()));
         return requestElementFromList(currencies, "Choose currency:");
+    }
+
+    private String readInputWithPrompt(String prompt) throws IOException {
+        showMsg(prompt, true);
+        return input.readLine().trim().split("\\s+")[0];
     }
 
 }

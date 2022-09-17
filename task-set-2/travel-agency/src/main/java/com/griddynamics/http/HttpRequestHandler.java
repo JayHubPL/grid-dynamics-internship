@@ -1,8 +1,10 @@
 package com.griddynamics.http;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import static java.net.HttpURLConnection.HTTP_OK;
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
+import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -10,13 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpTimeoutException;
-import java.nio.file.Path;
 import java.time.Duration;
-
-import static java.net.HttpURLConnection.HTTP_OK;
-import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
-import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
-import static java.net.HttpURLConnection.HTTP_UNAVAILABLE;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.griddynamics.connections.Connection;
+import com.griddynamics.flights.Flight;
 
 public class HttpRequestHandler {
     
@@ -32,33 +28,36 @@ public class HttpRequestHandler {
     private final String token;
     private final Duration timeout;
     private final Logger logger;
+    private final HttpClient httpClient;
+    private final Gson gsonInstance;
 
-    public HttpRequestHandler(Path tokenPath) throws IOException, FileNotFoundException {
+    public HttpRequestHandler(HttpClient httpClient, String token, Gson gsonInstance, Duration timeout) {
         logger = LogManager.getLogger(HttpRequestHandler.class);
         lambdaUri = URI.create("https://34wrh7kcoe3dwrggfw7ulm4tyq0htvgs.lambda-url.eu-west-2.on.aws/");
-        token = readTokenFromFile(tokenPath);
-        timeout = Duration.ofSeconds(10);
+        this.httpClient = httpClient;
+        this.token = token;
+        this.gsonInstance = gsonInstance;
+        this.timeout = timeout;
     }
 
-    public BigDecimal makePriceRequest(Connection connection) throws InvalidTokenException, IOException {
-        HttpRequest request = buildHttpRequest(connection);
+    public HttpRequestHandler(HttpClient httpClient, String token, Gson gsonInstance) {
+        this(httpClient, token, gsonInstance, Duration.ofSeconds(10));
+    }
+
+    public BigDecimal makePriceRequest(Flight flight) throws InvalidTokenException, IOException {
+        HttpRequest request = buildHttpRequest(flight);
         HttpResponse<String> response = null;
         BigDecimal price = null;
         int requestAttemptsLeft = 3;
 
-        while (requestAttemptsLeft > 0 && (response == null || response.statusCode() != HTTP_OK || price == null)) {
+        while (requestAttemptsLeft > 0 && !validPriceInfoReceieved(response, price)) {
             try {
                 response = sendRequest(request);
                 int statusCode = response.statusCode();
                 switch (statusCode) {
                     case HTTP_OK -> {
                         logger.info("Response received successfully");
-                        price = new Gson().fromJson(response.body(), ResponseBody.class).price();
-                        if (price == null) {
-                            logger.warn("Price is null");
-                        } else {
-                            logger.info(String.format("Received valid price: %s", price));
-                        }
+                        price = getPriceFormResponseBody(response.body());
                     } 
                     case HTTP_UNAUTHORIZED -> {
                         throw logger.throwing(Level.FATAL, new InvalidTokenException(token));
@@ -88,35 +87,36 @@ public class HttpRequestHandler {
             }
         }
         if (price == null) {
-            throw logger.throwing(Level.FATAL, new NoValidResponseException(connection));
+            throw logger.throwing(Level.FATAL, new NoValidResponseException(flight));
         }
         return price;
     }
 
-    private HttpRequest buildHttpRequest(Connection connection) {
+    private boolean validPriceInfoReceieved(HttpResponse<?> response, BigDecimal price) {
+        return response != null && response.statusCode() == HTTP_OK && price != null && !price.equals(BigDecimal.ZERO);
+    }
+
+    private BigDecimal getPriceFormResponseBody(String body) throws JsonSyntaxException {
+        BigDecimal price = gsonInstance.fromJson(body, ResponseBody.class).price();
+        if (price == null || price.equals(BigDecimal.ZERO) ) {
+            logger.info(String.format("Received invalid price: %s", price));
+        } else {
+            logger.info(String.format("Received valid price: %s", price));
+        }
+        return price;
+    }
+
+    private HttpRequest buildHttpRequest(Flight flight) {
         return HttpRequest.newBuilder(lambdaUri)
             .headers("x-authentication", token, "Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(new Gson().toJson(new RequestBody(connection))))
+            .POST(HttpRequest.BodyPublishers.ofString(gsonInstance.toJson(new RequestBody(flight))))
             .timeout(timeout)
             .build();
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request)
     throws IOException, HttpTimeoutException, InterruptedException {
-        return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-    }
-
-    private String readTokenFromFile(Path path) throws IOException, FileNotFoundException {
-        String token = null;
-        try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
-            token = reader.readLine().trim();
-        } catch (FileNotFoundException fileNotFoundException) {
-            logger.fatal("No token file found");
-            throw logger.throwing(Level.FATAL, fileNotFoundException);
-        } catch (IOException ioException) {
-            throw logger.throwing(Level.FATAL, ioException);
-        }
-        return token;
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
 }

@@ -2,7 +2,8 @@ package com.griddynamics;
 
 import java.util.function.Function;
 
-public abstract sealed class Result<T, E extends Exception> permits Ok<T, E>, Err<T, E> {
+@SuppressWarnings("rawtypes") // this is for 'permits Ok, Err' because javac rejects 'permits Ok<T, E>, Err<T, E>'
+public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
     
     public static <T> Result<T, Exception> ok(T value) {
         return new Ok<T, Exception>(value);

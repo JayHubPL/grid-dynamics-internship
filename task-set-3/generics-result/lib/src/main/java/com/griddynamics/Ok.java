@@ -31,7 +31,7 @@ public final class Ok<T, E extends Exception> extends Result<T, E> {
 
     @Override
     public Object orElse(Object value) {
-        return value;
+        return this.value;
     }
 
     @Override

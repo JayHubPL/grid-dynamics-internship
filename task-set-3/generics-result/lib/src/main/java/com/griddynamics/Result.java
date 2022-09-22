@@ -12,7 +12,7 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @return instance of {@code Ok} variant with {@code value} of type {@code T}
      */
     public static <T> Result<T, Exception> ok(T value) {
-        return new Ok<T, Exception>(value);
+        return new Ok<>(value);
     }
 
     /**
@@ -22,7 +22,7 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @return instance of {@code Err} variant with {@code exception} of type {@code E}
      */
     public static <E extends Exception> Result<Object, E> err(E exception) {
-        return new Err<Object, E>(exception);
+        return new Err<>(exception);
     }
 
     /**
@@ -38,7 +38,7 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
         try {
             runnable.run();
         } catch (Exception exception) {
-            return new Err<Object, Exception>(exception);
+            return new Err<>(exception);
         }
         return new Ok<>();
     }

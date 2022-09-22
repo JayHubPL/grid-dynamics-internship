@@ -58,10 +58,10 @@ class ResultTest {
     }
 
     @Test
-    public void flatMap_WhenResultIsErr_FlatMapsToOkByFactoryMethod_MapsToOk() throws Exception {
+    public void flatMap_WhenResultIsErr_DoesNothing() throws Exception {
         Result result = Result.err(new Exception()).flatMap((r) -> Result.ok("value"));
 
-        assertEquals(Ok.class, result.getClass());
+        assertEquals(Err.class, result.getClass());
     }
 
     @Test

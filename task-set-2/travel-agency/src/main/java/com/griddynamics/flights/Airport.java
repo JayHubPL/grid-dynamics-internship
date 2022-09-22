@@ -24,15 +24,6 @@ public class Airport implements Comparable<Airport> {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((airportCode == null) ? 0 : airportCode.hashCode());
-        result = prime * result + ((cityName == null) ? 0 : cityName.hashCode());
-        return result;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

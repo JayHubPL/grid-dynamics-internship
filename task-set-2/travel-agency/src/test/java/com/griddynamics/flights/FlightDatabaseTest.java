@@ -44,9 +44,27 @@ public class FlightDatabaseTest {
 
         List<Airport> actual = db.getTravelDestinationsFrom(KRK);
 
-        assertThat(expected).containsExactlyInAnyOrderElementsOf(actual);
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
-    // TODO MORE TESTS COMMING SOON
+    @Test
+    public void getOriginCityAirports_Warsaw_ReturnAllAirports() throws IOException {
+        FlightDatabase db = new FlightDatabase(resourcesPath.resolve("data_2.json"), gsonInstance);
+
+        List<Airport> expected = List.of(WAW, WMI);
+
+        List<Airport> actual = db.getOriginCityAirports("Warsaw");
+
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
+    @Test
+    public void getOriginCityAirports_UnknownCityName_ReturnEmptyList() throws IOException {
+        FlightDatabase db = new FlightDatabase(resourcesPath.resolve("data_2.json"), gsonInstance);
+
+        List<Airport> actual = db.getOriginCityAirports("unknownCityName");
+
+        assertThat(actual).isEmpty();
+    }
 
 }

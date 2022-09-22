@@ -44,7 +44,7 @@ public class FlightDatabaseTest {
 
         List<Airport> actual = db.getTravelDestinationsFrom(KRK);
 
-        assertThat(expected).containsAll(actual);
+        assertThat(expected).containsExactlyInAnyOrderElementsOf(actual);
     }
 
     // TODO MORE TESTS COMMING SOON

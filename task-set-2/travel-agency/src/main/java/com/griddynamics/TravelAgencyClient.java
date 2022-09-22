@@ -8,7 +8,6 @@ import com.griddynamics.flights.Airport;
 import com.griddynamics.flights.Flight;
 import com.griddynamics.flights.FlightDatabase;
 import com.griddynamics.http.HttpRequestHandler;
-import com.griddynamics.http.InvalidTokenException;
 import com.griddynamics.ui.UserInterface;
 
 import com.robustsoft.currencies.Currency;
@@ -25,7 +24,7 @@ public class TravelAgencyClient {
         this.httpRequestHandler = httpRequestHandler;
     }
 
-    public void runApplication() throws InvalidTokenException, IOException {
+    public void runApplication() throws IOException {
         UI.showMsg("Welcome to Flight Price Checker!");
 
         boolean shouldExitProgram = false;

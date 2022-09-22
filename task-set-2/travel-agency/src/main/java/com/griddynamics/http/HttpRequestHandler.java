@@ -44,7 +44,7 @@ public class HttpRequestHandler {
         this(httpClient, token, gsonInstance, Duration.ofSeconds(10));
     }
 
-    public BigDecimal makePriceRequest(Flight flight) throws InvalidTokenException, IOException {
+    public BigDecimal makePriceRequest(Flight flight) throws IOException {
         HttpRequest request = buildHttpRequest(flight);
         HttpResponse<String> response = null;
         BigDecimal price = null;

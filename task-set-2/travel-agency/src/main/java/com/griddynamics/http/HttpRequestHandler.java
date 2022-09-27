@@ -83,7 +83,7 @@ public class HttpRequestHandler {
             }
             if (price == null && requestAttemptsLeft > 0) {
                 requestAttemptsLeft--;
-                logger.info(String.format("Retrying sending the request. Attempts left: %d", requestAttemptsLeft));
+                logger.debug(String.format("Retrying sending the request. Attempts left: %d", requestAttemptsLeft));
             }
         }
         if (price == null) {

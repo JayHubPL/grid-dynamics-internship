@@ -21,7 +21,7 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @param exception exception stored in {@code Err} variant
      * @return instance of {@code Err} variant with {@code exception} of type {@code E}
      */
-    public static <E extends Exception> Result<Object, E> err(E exception) {
+    public static <T, E extends Exception> Result<T, E> err(E exception) {
         return new Err<>(exception);
     }
 
@@ -70,30 +70,19 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @param mapper function, which maps a value to a new {@code Result}
      * @return new {@code Result} instance or unchanged {@code Err} variant
      */
-    public abstract <R, U extends Exception> Result<?, ?> flatMap(Function<T, Result<R, U>> mapper);
+    public abstract <R, U extends Exception> Result<R, ? extends Exception> flatMap(Function<T, Result<R, U>> mapper);
 
     /**
      * Returns value stored in {@code Ok} variant or if {@code Result} is of {@code Err} variant, returns {@code value}
-     * given in the argument. Type safety is not guaranteed, because returned type is unknown in compile time.
-     * Use of {@code unwrap()} is recommended instead of this method.
+     * given in the argument.
      * @param value value, which should be returned when {@code Result} is of {@code Err} variant
-     * @return value of type {@code Object} based on the variant of {@code Result}
+     * @return value of type {@code T} based on the variant of {@code Result}
      */
-    public abstract Object orElse(Object value);
+    public abstract T orElse(T value);
 
     /**
      * Unwraps the {@code Result} type based on its variant and returns {@code value} stored in {@code Ok} variant
-     * or throws the exception stored in {@code Err} variant. It is recommended to use this method instead of {@code orElse()}
-     * for extracting value from {@code Ok} variant, for example:
-     * <pre>
-     * String value;
-     * Result result = Result.of(someRunnable);
-     * try {
-     *     value = result.unwrap();
-     * catch (Exception e) {
-     *     value = "orElse";
-     * }
-     * </pre>
+     * or throws the exception stored in {@code Err} variant.
      * @return value stored in {@code Ok variant}
      * @throws E exception stored in {@code Err} variant
      */

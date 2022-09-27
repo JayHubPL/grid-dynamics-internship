@@ -7,6 +7,9 @@ public final class Err<T, E extends Exception> extends Result<T, E> {
     private E exception;
 
     protected Err(E exception) {
+        if (exception == null) {
+            throw new IllegalArgumentException("Exception cannot be null");
+        }
         this.exception = exception;
     }
 
@@ -21,12 +24,12 @@ public final class Err<T, E extends Exception> extends Result<T, E> {
     }
 
     @Override
-    public <R, U extends Exception> Result<?, ?> flatMap(Function<T, Result<R, U>> mapper) {
+    public <R, U extends Exception> Result<R, ? extends Exception> flatMap(Function<T, Result<R, U>> mapper) {
         return new Err<>(exception);
     }
 
     @Override
-    public Object orElse(Object value) {
+    public T orElse(T value) {
         return value;
     }
 

@@ -25,12 +25,12 @@ public final class Ok<T, E extends Exception> extends Result<T, E> {
     }
 
     @Override
-    public <R, U extends Exception> Result<?, ?> flatMap(Function<T, Result<R, U>> mapper) {
+    public <R, U extends Exception> Result<R, ?> flatMap(Function<T, Result<R, U>> mapper) {
         return mapper.apply(value);
     }
 
     @Override
-    public Object orElse(Object value) {
+    public T orElse(T value) {
         return this.value;
     }
 

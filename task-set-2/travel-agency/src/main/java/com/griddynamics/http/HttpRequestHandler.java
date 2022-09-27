@@ -60,7 +60,7 @@ public class HttpRequestHandler {
                         price = getPriceFormResponseBody(response.body());
                     } 
                     case HTTP_UNAUTHORIZED -> {
-                        throw logger.throwing(Level.FATAL, new InvalidTokenException(token));
+                        throw logger.throwing(Level.FATAL, new InvalidTokenException());
                     }
                     case HTTP_BAD_REQUEST -> {
                         logger.warn(String.format("Bad request status code received: %d", statusCode));

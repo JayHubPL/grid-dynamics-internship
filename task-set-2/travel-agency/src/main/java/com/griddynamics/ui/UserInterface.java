@@ -35,9 +35,7 @@ public class UserInterface {
     }
 
     public String requestOriginCityName() throws IOException {
-        String prompt = "Please enter your origin city name: ";
-        String cityName = readInputWithPrompt(prompt);
-        return cityName;
+        return readInputWithPrompt("Please enter your origin city name: ");
     }
 
     public <T extends Comparable<T>> T requestElementFromList(List<T> list, String prompt) throws IOException {

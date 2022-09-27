@@ -2,7 +2,7 @@ package com.griddynamics.http;
 
 import java.math.BigDecimal;
 
-public class ResponseBody {
+public class FlightPriceResponseBody {
 
     private BigDecimal price;
 

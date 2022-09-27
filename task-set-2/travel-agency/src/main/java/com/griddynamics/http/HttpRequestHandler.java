@@ -97,7 +97,7 @@ public class HttpRequestHandler {
     }
 
     private BigDecimal getPriceFormResponseBody(String body) throws JsonSyntaxException {
-        BigDecimal price = gsonInstance.fromJson(body, ResponseBody.class).price();
+        BigDecimal price = gsonInstance.fromJson(body, FlightPriceResponseBody.class).price();
         if (price == null || price.equals(BigDecimal.ZERO) ) {
             logger.info(String.format("Received invalid price: %s", price));
         } else {
@@ -109,7 +109,7 @@ public class HttpRequestHandler {
     private HttpRequest buildHttpRequest(Flight flight) {
         return HttpRequest.newBuilder(lambdaUri)
             .headers("x-authentication", token, "Content-Type", "application/json")
-            .POST(HttpRequest.BodyPublishers.ofString(gsonInstance.toJson(new RequestBody(flight))))
+            .POST(HttpRequest.BodyPublishers.ofString(gsonInstance.toJson(new FlightPriceRequestBody(flight))))
             .timeout(timeout)
             .build();
     }

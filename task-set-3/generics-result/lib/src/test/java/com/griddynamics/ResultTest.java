@@ -30,7 +30,6 @@ class ResultTest {
         Result<String, ?> result = Result.of(supplier);
 
         assertInstanceOf(okClass, result);
-        // assertEquals(OK.class, result.getClass());
         assertEquals("value", result.orElse(""));
     }
 
@@ -40,7 +39,6 @@ class ResultTest {
         Result<String, ?> result = Result.of(supplier);
 
         assertInstanceOf(errClass, result);
-        // assertEquals(Err.class, result.getClass());
         assertThrows(RuntimeException.class, () -> result.unwrap());
     }
 
@@ -56,7 +54,6 @@ class ResultTest {
         Result<String, Exception> result = Result.err(new Exception()).map((s) -> s + "!");
 
         assertInstanceOf(errClass, result);
-        // assertEquals(Err.class, result.getClass());
     }
 
     @Test
@@ -64,7 +61,6 @@ class ResultTest {
         Result<String, Exception> result = Result.ok("value").mapErr((e) -> new Exception(e));
 
         assertInstanceOf(okClass, result);
-        // assertEquals(Ok.class, result.getClass());
     }
 
     @Test
@@ -79,7 +75,6 @@ class ResultTest {
         Result<String, ?> result = Result.ok("value").flatMap((r) -> Result.err(new Exception()));
 
         assertInstanceOf(errClass, result);
-        // assertEquals(Err.class, result.getClass());
     }
 
     @Test
@@ -87,7 +82,6 @@ class ResultTest {
         Result<String, ?> result = Result.err(new Exception()).flatMap((r) -> Result.ok("value"));
 
         assertInstanceOf(errClass, result);
-        // assertEquals(Err.class, result.getClass());
     }
 
     @Test

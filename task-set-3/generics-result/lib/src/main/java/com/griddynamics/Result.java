@@ -3,8 +3,7 @@ package com.griddynamics;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("rawtypes") // this is for 'permits Ok, Err' because javac rejects 'permits Ok<T, E>, Err<T, E>'
-public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
+public abstract sealed class Result<T, E extends Exception> {
     
     /**
      * Creates an instanse of {@code Result} of variant {@code Ok} storing given {@code value}.
@@ -35,7 +34,7 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @return instance of {@code Ok} with return value given by the {@code supplier} if no exception is thrown during
      * execution of {@code supplier.get()} or instance of {@code Err} if exception is thrown, storing it inside {@code Err}
      */
-    public static <T> Result<T, ? extends Exception> of(Supplier<T> supplier) {
+    public static <T> Result<T, Exception> of(Supplier<T> supplier) {
         try {
             return new Ok<>(supplier.get());
         } catch (Exception exception) {
@@ -87,5 +86,78 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
      * @throws E exception stored in {@code Err} variant
      */
     public abstract T unwrap() throws E;
+
+    private static final class Ok<T, E extends Exception> extends Result<T, E> {
+    
+        private T value;
+    
+        protected Ok(T value) {
+            this.value = value;
+        }
+    
+        @Override
+        public <R> Result<R, E> map(Function<T, R> mapper) {
+            return new Ok<>(mapper.apply(value));
+        }
+    
+        @Override
+        public <U extends Exception> Result<T, U> mapErr(Function<E, U> mapper) {
+            return new Ok<>(value);
+        }
+    
+        @Override
+        public <R, U extends Exception> Result<R, ?> flatMap(Function<T, Result<R, U>> mapper) {
+            return mapper.apply(value);
+        }
+    
+        @Override
+        public T orElse(T value) {
+            return this.value;
+        }
+    
+        @Override
+        public T unwrap() throws E {
+            return value;
+        }
+    
+    }
+
+    private static final class Err<T, E extends Exception> extends Result<T, E> {
+    
+        private E exception;
+    
+        protected Err(E exception) {
+            if (exception == null) {
+                throw new IllegalArgumentException("Exception cannot be null");
+            }
+            this.exception = exception;
+        }
+    
+        @Override
+        public <R> Result<R, E> map(Function<T, R> mapper) {
+            return new Err<>(exception);
+        }
+    
+        @Override
+        public <U extends Exception> Result<T, U> mapErr(Function<E, U> mapper) {
+            return new Err<>(mapper.apply(exception));
+        }
+    
+        @Override
+        public <R, U extends Exception> Result<R, ? extends Exception> flatMap(Function<T, Result<R, U>> mapper) {
+            return new Err<>(exception);
+        }
+    
+        @Override
+        public T orElse(T value) {
+            return value;
+        }
+    
+        @Override
+        public T unwrap() throws E {
+            throw exception;
+        }
+    
+    }
 
 }

@@ -2,6 +2,7 @@ package com.griddynamics;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ public class Main {
     public static void main(String[] args) {
         UserInterface UI = new UserInterface();
         Gson gson = new Gson();
+        URI lambdaURI = URI.create("https://34wrh7kcoe3dwrggfw7ulm4tyq0htvgs.lambda-url.eu-west-2.on.aws/");
 
         if (args.length == 0) {
             UI.showMsg("No database file was provided. Please provide a path to the file containing flights information.");
@@ -32,7 +34,7 @@ public class Main {
             String token = FileParser.parseTokenFile(tokenPath);
 
             HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequestHandler httpRequestHandler = new HttpRequestHandler(httpClient, token, gson);
+            HttpRequestHandler httpRequestHandler = new HttpRequestHandler(httpClient, token, lambdaURI, gson);
             FlightDatabase flightDB = new FlightDatabase(databasePath, gson);
 
             TravelAgencyClient travelAgencyClient = new TravelAgencyClient(UI, flightDB, httpRequestHandler);

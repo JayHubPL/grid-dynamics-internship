@@ -32,23 +32,23 @@ public class FlightDatabase {
     public List<Airport> getTravelDestinationsFrom(Airport airport) {
         return flights.stream()
             .filter(f -> f.origin().equals(airport))
-            .map(f -> f.destination())
+            .map(Flight::destination)
             .collect(Collectors.toList());
     }
 
     public List<Airport> getOriginCityAirports(String originCityName) {
         return flights.stream()
-            .map(f -> f.origin())
+            .map(Flight::origin)
             .filter(a -> a.cityName().equals(originCityName))
             .distinct()
             .collect(Collectors.toList());
     }
 
-    private List<Flight> loadDatabaseFromFile(Path path) throws FileNotFoundException, JsonSyntaxException, IOException {
+    private List<Flight> loadDatabaseFromFile(Path path) throws JsonSyntaxException, IOException {
         List<Flight> flights = Collections.emptyList();
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             DatabaseRecord[] records = gsonInstance.fromJson(reader, DatabaseRecord[].class);
-            flights = Arrays.asList(records).stream()
+            flights = Arrays.stream(records)
                 .map(DatabaseRecord::mapToFlight)
                 .collect(Collectors.toList());
         } catch(FileNotFoundException fileNotFoundException) {

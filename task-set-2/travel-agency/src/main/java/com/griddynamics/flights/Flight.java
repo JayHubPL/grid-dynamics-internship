@@ -2,8 +2,8 @@ package com.griddynamics.flights;
 
 public class Flight {
 
-    private Airport origin;
-    private Airport destination;
+    private final Airport origin;
+    private final Airport destination;
 
     public Flight(Airport origin, Airport destination) {
         this.origin = origin;

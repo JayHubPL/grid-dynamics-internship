@@ -31,17 +31,17 @@ public class HttpRequestHandler {
     private final HttpClient httpClient;
     private final Gson gsonInstance;
 
-    public HttpRequestHandler(HttpClient httpClient, String token, Gson gsonInstance, Duration timeout) {
+    public HttpRequestHandler(HttpClient httpClient, String token, Gson gsonInstance, URI uri, Duration timeout) {
         logger = LogManager.getLogger(HttpRequestHandler.class);
-        lambdaUri = URI.create("https://34wrh7kcoe3dwrggfw7ulm4tyq0htvgs.lambda-url.eu-west-2.on.aws/");
+        lambdaUri = uri;
         this.httpClient = httpClient;
         this.token = token;
         this.gsonInstance = gsonInstance;
         this.timeout = timeout;
     }
 
-    public HttpRequestHandler(HttpClient httpClient, String token, Gson gsonInstance) {
-        this(httpClient, token, gsonInstance, Duration.ofSeconds(10));
+    public HttpRequestHandler(HttpClient httpClient, String token, URI uri, Gson gsonInstance) {
+        this(httpClient, token, gsonInstance, uri, Duration.ofSeconds(10));
     }
 
     public BigDecimal makePriceRequest(Flight flight) throws IOException {

@@ -11,10 +11,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,15 +30,11 @@ import com.griddynamics.flights.Flight;
 @ExtendWith(MockitoExtension.class)
 public class HttpRequestHandlerTest {
 
-    public static Gson gsonInstance;
-    public static Flight dummyFlight;
-    public HttpRequestHandler httpRequestHandler;
+    public final Gson gsonInstance = new Gson();
+    public final Flight dummyFlight = new Flight(new Airport("A", "AAA"), new Airport("B", "BBB"));
+    public final URI uri = URI.create("https://example.com/");
 
-    @BeforeAll
-    public static void init() {
-        gsonInstance = new Gson();
-        dummyFlight = new Flight(new Airport("A", "AAA"), new Airport("B", "BBB"));
-    }
+    public HttpRequestHandler httpRequestHandler;
 
     @Mock
     public HttpResponse<String> mockedResponse;
@@ -48,7 +44,7 @@ public class HttpRequestHandlerTest {
 
     @BeforeEach
     public void initBeforeEach() {
-        httpRequestHandler = new HttpRequestHandler(mockedHttpClient, "token", gsonInstance);
+        httpRequestHandler = new HttpRequestHandler(mockedHttpClient, "token", uri, gsonInstance);
     }
 
     @Test

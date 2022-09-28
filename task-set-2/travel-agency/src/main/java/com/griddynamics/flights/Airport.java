@@ -2,8 +2,8 @@ package com.griddynamics.flights;
 
 public class Airport implements Comparable<Airport> {
 
-    private String cityName;
-    private String airportCode;
+    private final String cityName;
+    private final String airportCode;
 
     public Airport(String name, String code) {
         this.cityName = name;

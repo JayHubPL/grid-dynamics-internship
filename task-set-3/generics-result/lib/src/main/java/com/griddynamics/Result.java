@@ -1,6 +1,7 @@
 package com.griddynamics;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @SuppressWarnings("rawtypes") // this is for 'permits Ok, Err' because javac rejects 'permits Ok<T, E>, Err<T, E>'
 public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
@@ -26,21 +27,20 @@ public abstract sealed class Result<T, E extends Exception> permits Ok, Err {
     }
 
     /**
-     * Creates an instance of {@code Result} of variant depending on the outcome of {@code runnable}.
-     * While running {@code runnable}, if an exception is thrown, the {@code Err} variant storing that
-     * exception will be returned, otherwise the {@code Ok} variant with no specific value.
-     * @param runnable code for which the result is being determined
-     * @return instance of {@code Ok} with no specific value if no exception is thrown during
-     * execution of {@code runnable} or instance of {@code Err} if exception is thrown, storing it
-     * inside {@code Err}
+     * Creates an instance of {@code Result} of variant depending on the outcome of {@code supplier.get()}.
+     * While running {@code supplier.get()}, if an exception is thrown, the {@code Err} variant storing that
+     * exception will be returned, otherwise the {@code Ok} variant with returned value of type {@code T}.
+     * @param <T> return type of the {@code supplier}
+     * @param supplier code for which the result is being determined
+     * @return instance of {@code Ok} with return value given by the {@code supplier} if no exception is thrown during
+     * execution of {@code supplier.get()} or instance of {@code Err} if exception is thrown, storing it inside {@code Err}
      */
-    public static Result<?, ? extends Exception> of(Runnable runnable) {
+    public static <T> Result<T, ? extends Exception> of(Supplier<T> supplier) {
         try {
-            runnable.run();
+            return new Ok<>(supplier.get());
         } catch (Exception exception) {
             return new Err<>(exception);
         }
-        return new Ok<>();
     }
 
     /**

@@ -1,6 +1,9 @@
 package com.griddynamics;
 
 import org.junit.jupiter.api.Test;
+
+import com.google.common.base.Supplier;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResultTest {
@@ -11,19 +14,21 @@ class ResultTest {
     }
 
     @Test
-    public void of_RunnableDoesNotThrow_ReturnOk() {
-        Runnable runnable = () -> {};
-        Result<?, ?> result = Result.of(runnable);
+    public void of_RunnableDoesNotThrow_ReturnOk() throws Exception {
+        Supplier<String> supplier = () -> "value";
+        Result<String, ?> result = Result.of(supplier);
 
         assertEquals(Ok.class, result.getClass());
+        assertEquals("value", result.orElse(""));
     }
 
     @Test
     public void of_RunnableDoesThrow_ReturnErr() {
-        Runnable runnable = () -> { throw new RuntimeException(); };
-        Result<?, ?> result = Result.of(runnable);
+        Supplier<String> supplier = () -> { throw new RuntimeException(); };
+        Result<String, ?> result = Result.of(supplier);
 
         assertEquals(Err.class, result.getClass());
+        assertThrows(RuntimeException.class, () -> result.unwrap());
     }
 
     @Test

@@ -119,6 +119,32 @@ public abstract sealed class Result<T, E extends Exception> {
         public T unwrap() throws E {
             return value;
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            return result;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Ok<T, E> other = (Ok<T, E>) obj;
+            if (value == null) {
+                if (other.value != null)
+                    return false;
+            } else if (!value.equals(other.value))
+                return false;
+            return true;
+        }
     
     }
 
@@ -156,6 +182,32 @@ public abstract sealed class Result<T, E extends Exception> {
         @Override
         public T unwrap() throws E {
             throw exception;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((exception == null) ? 0 : exception.hashCode());
+            return result;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Err<T, E> other = (Err<T, E>) obj;
+            if (exception == null) {
+                if (other.exception != null)
+                    return false;
+            } else if (!exception.equals(other.exception))
+                return false;
+            return true;
         }
     
     }

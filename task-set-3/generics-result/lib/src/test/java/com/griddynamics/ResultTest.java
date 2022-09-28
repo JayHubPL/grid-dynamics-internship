@@ -6,18 +6,7 @@ import com.google.common.base.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeAll;
-
 class ResultTest {
-
-    public static Class<?> okClass;
-    public static Class<?> errClass;
-
-    @BeforeAll 
-    public static void init() throws ClassNotFoundException {
-        okClass = Class.forName("com.griddynamics.Result$Ok");
-        errClass = Class.forName("com.griddynamics.Result$Err");
-    }
     
     @Test
     public void err_ArgumentIsNull_ThrowException() {
@@ -29,7 +18,6 @@ class ResultTest {
         Supplier<String> supplier = () -> "value";
         Result<String, ?> result = Result.of(supplier);
 
-        assertInstanceOf(okClass, result);
         assertEquals("value", result.orElse(""));
     }
 
@@ -38,7 +26,6 @@ class ResultTest {
         Supplier<String> supplier = () -> { throw new RuntimeException(); };
         Result<String, ?> result = Result.of(supplier);
 
-        assertInstanceOf(errClass, result);
         assertThrows(RuntimeException.class, () -> result.unwrap());
     }
 
@@ -46,21 +33,22 @@ class ResultTest {
     public void map_WhenResultIsOk_MapValue() throws Exception {
         Result<String, Exception> result = Result.ok("value").map((s) -> s + "!");
 
-        assertEquals("value!", result.unwrap());
+        assertEquals(Result.ok("value!"), result);
     }
 
     @Test
     public void map_WhenResultIsErr_DoNothing() throws Exception {
-        Result<String, Exception> result = Result.err(new Exception()).map((s) -> s + "!");
+        Exception exception = new Exception();
+        Result<String, Exception> result = Result.err(exception).map((s) -> s + "!");
 
-        assertInstanceOf(errClass, result);
+        assertEquals(Result.err(exception), result);
     }
 
     @Test
     public void mapErr_WhenResultIsOk_DoNothing() {
         Result<String, Exception> result = Result.ok("value").mapErr((e) -> new Exception(e));
 
-        assertInstanceOf(okClass, result);
+        assertEquals(Result.ok("value"), result);
     }
 
     @Test
@@ -72,16 +60,18 @@ class ResultTest {
 
     @Test
     public void flatMap_WhenResultIsOk_FlatMapsToErrByFactoryMethod_MapsToErr() {
-        Result<String, ?> result = Result.ok("value").flatMap((r) -> Result.err(new Exception()));
+        Exception exception = new Exception();
+        Result<String, ?> result = Result.ok("value").flatMap((r) -> Result.err(exception));
 
-        assertInstanceOf(errClass, result);
+        assertEquals(Result.err(exception), result);
     }
 
     @Test
     public void flatMap_WhenResultIsErr_DoesNothing() throws Exception {
-        Result<String, ?> result = Result.err(new Exception()).flatMap((r) -> Result.ok("value"));
+        Exception exception = new Exception();
+        Result<String, ?> result = Result.err(exception).flatMap((r) -> Result.ok("value"));
 
-        assertInstanceOf(errClass, result);
+        assertEquals(Result.err(exception), result);
     }
 
     @Test

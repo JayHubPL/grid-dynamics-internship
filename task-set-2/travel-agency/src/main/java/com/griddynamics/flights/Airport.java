@@ -47,7 +47,7 @@ public class Airport implements Comparable<Airport> {
 
     @Override
     public int compareTo(Airport o) {
-        return this.toString().compareTo(o.toString());
+        return (cityName + airportCode).compareTo(o.cityName + o.airportCode);
     }
     
 }

@@ -16,6 +16,11 @@ public class UserInterface {
     private final BufferedReader input;
     private final PrintWriter output;
 
+    private static final String yes = "Yes, check another flight.";
+    private static final String no = "No, exit the program.";
+    private static final List<String> options = Arrays.asList(yes, no);
+    private static final List<Currency> currencies = new LinkedList<>(Arrays.asList(Currency.values()));
+
     public UserInterface(BufferedReader input, PrintWriter output) {
         this.input = input;
         this.output = output;
@@ -60,14 +65,10 @@ public class UserInterface {
     }
 
     public boolean askIfWantsToExit() throws IOException {
-        String yes = "Yes, check another flight.";
-        String no = "No, exit the program.";
-        List<String> options = Arrays.asList(yes, no);
         return requestElementFromList(options, "Do you wish to continue?").equals(no);
     }
 
     public Currency requestCurrency() throws IOException {
-        LinkedList<Currency> currencies = new LinkedList<>(Arrays.asList(Currency.values()));
         return requestElementFromList(currencies, "Choose currency:");
     }
 

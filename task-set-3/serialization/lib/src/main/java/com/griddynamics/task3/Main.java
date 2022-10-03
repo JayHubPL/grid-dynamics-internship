@@ -34,6 +34,27 @@ public class Main {
          * Extremely small size of serialized object. Only bare minimum about object's state is serialized.
          */
 
+        // CHANGES: User has now a 'server' field
+
+        Server server = new Server(user);
+        user.joinServer(server);
+        bytes = Serde.serializeToByteArray(user);
+        System.out.println(bytes.length);
+
+        /*
+         * 253
+         * 
+         * By having Server implement Serializable and User implement Externalizable, the serialization of
+         * the user is finite and complete.
+         */
+
+        // CHANGES: Server implements Externalizable instead of Serializable
+
+        /*
+         * 227
+         * 
+         * Serialization was successful, the size was decreased.
+         */
     }
 
 }

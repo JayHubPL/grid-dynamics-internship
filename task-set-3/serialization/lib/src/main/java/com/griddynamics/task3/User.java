@@ -10,6 +10,7 @@ import com.griddynamics.utils.ByteOps;
 public class User implements Externalizable {
 
     private static final long serialVersionUID = 1L;
+    private Server server;
 
     private boolean isActive;
     private boolean isAdmin;
@@ -21,6 +22,7 @@ public class User implements Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeByte(ByteOps.booleansToByte(isActive, isAdmin, isModerator, isVIP, isMuted, isBanned));
+        out.writeObject(server);
         out.flush();
     }
 
@@ -33,6 +35,10 @@ public class User implements Externalizable {
         isVIP = flags[3];
         isMuted = flags[4];
         isBanned = flags[5];
+    }
+
+    public void joinServer(Server server) {
+        this.server = server;
     }
     
 }

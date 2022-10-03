@@ -1,6 +1,7 @@
 package com.griddynamics.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,10 +26,10 @@ public class Serde {
         }
     }
 
-    public static <T extends Serializable> byte[] serializeToByteArray(T obj) throws IOException {
+    public static <T extends Externalizable> byte[] serializeToByteArray(T obj) throws IOException {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ObjectOutputStream oos = new ObjectOutputStream(baos);) {
-            oos.writeObject(obj);
+            obj.writeExternal(oos);
             oos.flush();
             return baos.toByteArray();
         }

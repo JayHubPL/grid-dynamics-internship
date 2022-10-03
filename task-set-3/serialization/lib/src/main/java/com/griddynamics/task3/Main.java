@@ -19,10 +19,20 @@ public class Main {
         // CHANGES: User now implements Externalizable and has custom serialization implemented
 
         /*
+         * Using writeObject():
          * 52
          * 
-         * New size of byte array is over half as small as the previous one
+         * New size of byte array is over half as small as the previous one.
+         * The class of the object, the signature of the class, and the values of the non-transient and non-static
+         * fields of the class and all of its supertypes are written.
          */
+
+         /*
+          * Using writeExternal():
+          * 7
+          *
+          * Extremely small size of serialized object. Only bare minimum about object's state is serialized.
+          */
 
     }
 

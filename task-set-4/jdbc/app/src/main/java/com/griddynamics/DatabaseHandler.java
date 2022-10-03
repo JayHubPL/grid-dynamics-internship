@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class DatabaseHandler implements AutoCloseable {
 
@@ -77,11 +79,55 @@ public class DatabaseHandler implements AutoCloseable {
         return users;
     }
 
+    public void execute(String query, Object... args) throws SQLException {
+        try (PreparedStatement prepStmt = applyArgsToQuery(query, args)) {
+            prepStmt.executeUpdate(); // this throws if query returns ResultSet
+            conn.commit();
+        }
+    }
+
+    public <T> Optional<T> findOne(String query, Function<ResultSet, T> mapper, Object... args) throws SQLException {
+        try (PreparedStatement prepStmt = applyArgsToQuery(query, args)) {
+            ResultSet result = prepStmt.executeQuery(); // this throws if query does not return ResultSet
+            return switch (getRowCount(result)) {
+                case 0 -> Optional.empty();
+                case 1 -> Optional.of(mapper.apply(result));
+                default -> throw new SQLException("Returned more than one record matching the query: " + query);
+            };
+        }
+    }
+
+    public <T> List<T> findMany(String query, Function<ResultSet, T> mapper, Object... args) throws SQLException {
+        try (PreparedStatement prepStmt = applyArgsToQuery(query, args)) {
+            ResultSet result = prepStmt.executeQuery(); // this throws if query does not return ResultSet
+            List<T> mappedRecords = new ArrayList<>();
+            while (result.next()) {
+                mappedRecords.add(mapper.apply(result));
+            }
+            return mappedRecords;
+        }
+    }
+
     @Override
     public void close() throws SQLException {
         conn.rollback();
         stmt.close();
         conn.close();
+    }
+
+    private PreparedStatement applyArgsToQuery(String query, Object[] args) throws SQLException {
+        PreparedStatement prepStmt = conn.prepareStatement(query);
+        for (int i = 0; i < args.length; i++) {
+            prepStmt.setObject(i + 1, args[i]);
+        }
+        return prepStmt;
+    }
+
+    private int getRowCount(ResultSet result) throws SQLException {
+        result.last();
+        int rowCount = result.getRow();
+        result.beforeFirst();
+        return rowCount;
     }
 
 }

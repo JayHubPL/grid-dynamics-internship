@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         ConnectionAttributes connectionAttributes = new ConnectionAttributes(IP, PORT, DATABASE_NAME, USER, PASSWORD);
-        DatabaseConnectionProvider connectionProvider = new JDBCDriverConnectionProvider(connectionAttributes);
+        DatabaseConnectionProvider connectionProvider = new PGDataSource(connectionAttributes);
         try (DatabaseHandler db = new DatabaseHandler(connectionProvider)) {
 
             db.initializeUsersTable();

@@ -11,7 +11,7 @@ public class Mentor implements Serializable {
 
     private final String name;
     private final transient String password;
-    private List<Intern> interns;
+    private final List<Intern> interns;
 
     public Mentor(String name, String password, Intern... interns) {
         this.name = name;
@@ -21,7 +21,7 @@ public class Mentor implements Serializable {
     }
 
     public void addInterns(Intern... interns) {
-        Arrays.stream(interns).forEach(this.interns::add);
+        this.interns.addAll(Arrays.asList(interns));
     }
 
     public String getName() {

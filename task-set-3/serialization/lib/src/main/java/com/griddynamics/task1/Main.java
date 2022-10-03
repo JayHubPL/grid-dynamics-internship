@@ -31,8 +31,8 @@ public class Main {
          * 
          * Values of String fields are preserved.
          */
-        mentor.getInterns().stream().forEach(i -> System.out.println(i.hashCode()));
-        deserMentor.getInterns().stream().forEach(i -> System.out.println(i.hashCode()));
+        mentor.getInterns().forEach(i -> System.out.println(i.hashCode()));
+        deserMentor.getInterns().forEach(i -> System.out.println(i.hashCode()));
         /*
          * 723074861 
          * 1950409828
@@ -44,7 +44,7 @@ public class Main {
          * 
          * Hash codes of interns in intern list after serialization was not preserved.
          */
-        deserMentor.getInterns().stream().forEach(i -> System.out.println(i.getMentor().hashCode()));
+        deserMentor.getInterns().forEach(i -> System.out.println(i.getMentor().hashCode()));
         /* 
          * 455659002
          * 455659002

@@ -3,6 +3,7 @@ target
 .idea
 .vscode
 .DS_Store
+*.log
 build
 bin
 .gradle

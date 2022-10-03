@@ -27,12 +27,12 @@ public class Main {
          * fields of the class and all of its supertypes are written.
          */
 
-         /*
-          * Using writeExternal():
-          * 7
-          *
-          * Extremely small size of serialized object. Only bare minimum about object's state is serialized.
-          */
+        /*
+         * Using writeExternal():
+         * 7
+         *
+         * Extremely small size of serialized object. Only bare minimum about object's state is serialized.
+         */
 
     }
 

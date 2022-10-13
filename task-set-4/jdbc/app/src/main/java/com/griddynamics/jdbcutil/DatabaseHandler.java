@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+// TODO due to the introduction of pooling, DatabaseHandler should not autoclose connections,
+// instead it should abandon/realease the connection without calling close() on it and leave
+// it to the DatabaseConnectionProvider to close them
+
 public class DatabaseHandler implements AutoCloseable {
 
     protected final Connection conn;

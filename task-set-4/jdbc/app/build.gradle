@@ -37,6 +37,8 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
 
     implementation 'com.griddynamics:generics-result:1.0'
+
+    implementation 'com.zaxxer:HikariCP:5.0.1'
 }
 
 application {

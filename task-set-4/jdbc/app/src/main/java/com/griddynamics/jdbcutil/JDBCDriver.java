@@ -1,4 +1,4 @@
-package com.griddynamics;
+package com.griddynamics.jdbcutil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,7 +1,11 @@
-package com.griddynamics;
+package com.griddynamics.deletesomeusers;
 
 import java.net.InetAddress;
 import java.sql.SQLException;
+
+import com.griddynamics.jdbcutil.ConnectionAttributes;
+import com.griddynamics.jdbcutil.DatabaseConnectionProvider;
+import com.griddynamics.jdbcutil.PGDataSource;
 
 public class Main {
     
@@ -14,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         ConnectionAttributes connectionAttributes = new ConnectionAttributes(IP, PORT, DATABASE_NAME, USER, PASSWORD);
         DatabaseConnectionProvider connectionProvider = new PGDataSource(connectionAttributes);
-        try (DatabaseHandler db = new DatabaseHandler(connectionProvider)) {
+        try (UserDBHandler db = new UserDBHandler(connectionProvider)) {
 
             db.initializeUsersTable();
             db.populateUsersTable(100);

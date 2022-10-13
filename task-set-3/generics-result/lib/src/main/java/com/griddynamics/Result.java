@@ -8,10 +8,11 @@ public abstract sealed class Result<T, E extends Exception> {
     /**
      * Creates an instanse of {@code Result} of variant {@code Ok} storing given {@code value}.
      * @param <T> type of {@code value}
+     * @param <E> type of exception
      * @param value value stored in {@code Ok} variant
      * @return instance of {@code Ok} variant with {@code value} of type {@code T}
      */
-    public static <T> Result<T, Exception> ok(T value) {
+    public static <T, E extends Exception> Result<T, E> ok(T value) {
         return new Ok<>(value);
     }
 

@@ -20,6 +20,7 @@ java {
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -34,11 +35,13 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.5.0'
 
     implementation 'com.h2database:h2:2.1.214'
+
+    implementation 'com.griddynamics:generics-result:1.0'
 }
 
 application {
     // Define the main class for the application.
-    mainClass = 'com.griddynamics.App'
+    mainClass = 'com.griddynamics.Main'
 }
 
 tasks.named('test') {

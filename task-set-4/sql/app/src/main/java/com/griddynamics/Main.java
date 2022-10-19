@@ -32,8 +32,10 @@ public class Main {
         //         """, Country.mapper);
         // countries.forEach(System.out::println);
         List<Person> people = db.findMany("""
-                SELECT * FROM people
-                """, Person.mapper);
+                SELECT id, name, age, ARRAY_AGG(citizenships.country_id) AS citizenship
+                FROM people LEFT JOIN citizenships ON citizenships.person_id = people.id
+                GROUP BY people.id
+                """, Person.MAPPER);
         people.forEach(System.out::println);
         db.close();
     }
@@ -47,7 +49,7 @@ public class Main {
                 Continent continent = Continent.getContinentFromName(scanner.next());
                 int area = Integer.parseInt(scanner.next());
                 int population = Integer.parseInt(scanner.next());
-                countries.add(new Country(name, population, area, continent));
+                countries.add(new Country(null, name, population, area, continent));
             }
         }
         return countries;

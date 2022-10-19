@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -20,7 +22,15 @@ import com.griddynamics.jdbcutil.DatabaseHandler;
 
 public class CountriesDBHandler extends DatabaseHandler {
 
-    public static final int DEFAULT_POPULATION_SIZE = 10000;
+    private static final Function<ResultSet, Integer> MAX_ID_MAPPER = rs -> {
+        try {
+            return rs.getInt("max_id");
+        } catch (SQLException sqlException) {
+            throw new RuntimeException(sqlException);
+        }
+    };
+
+    public static final int DEFAULT_POPULATION_SIZE = 100;
     public static final int DEFAULT_MAX_CITIZENSHIPS = 4;
     public static Map<Integer, Continent> continentIdMapping = Collections.emptyMap(); // this is not the ideal solution but it does the job
     private static final Function<ResultSet, Pair<Integer, Continent>> mapper = rs -> {
@@ -36,9 +46,13 @@ public class CountriesDBHandler extends DatabaseHandler {
 
     public CountriesDBHandler(DatabaseConnectionProvider provider, List<Country> countries, int noOfPeople, int maxCitizenships) throws SQLException {
         super(provider);
-        initialize(countries, noOfPeople);
-        populate(noOfPeople, maxCitizenships);
+        deleteTables();
+        createTables();
+        initializeContinentsTable();
         continentIdMapping = createContinentIdMapping();
+        initializeCountriesTable(countries);
+        initializePeopleTable(noOfPeople);
+        initializeCitizenshipsTable(maxCitizenships);
     }
 
     public CountriesDBHandler(DatabaseConnectionProvider provider, List<Country> countries, int noOfPeople) throws SQLException {
@@ -59,13 +73,14 @@ public class CountriesDBHandler extends DatabaseHandler {
         return mapping;
     }
 
-    private void initialize(List<Country> countries, int noOfPeople) throws SQLException {
-        createTables();
-        initializeContinentTable();
-        initializeCountryTable(countries);
+    private void deleteTables() throws SQLException {
+        execute("DROP TABLE IF EXISTS citizenships");
+        execute("DROP TABLE IF EXISTS countries");
+        execute("DROP TABLE IF EXISTS people");
+        execute("DROP TABLE IF EXISTS continents");
     }
 
-    public void createTables() throws SQLException {
+    private void createTables() throws SQLException {
         String query = """
                 CREATE TABLE IF NOT EXISTS continents
                 ( id SERIAL PRIMARY KEY
@@ -88,7 +103,6 @@ public class CountriesDBHandler extends DatabaseHandler {
                 ( id SERIAL PRIMARY KEY
                 , name varchar(50) NOT NULL
                 , age int NOT NULL
-                , citizenship int[]
                 )
                 """;
                 /*
@@ -99,39 +113,56 @@ public class CountriesDBHandler extends DatabaseHandler {
                  * This is not possible in PostgreSQL
                  * https://stackoverflow.com/questions/41054507/postgresql-array-of-elements-that-each-are-a-foreign-key
                  * 
-                 * TODO find another solution to create relation between each citizenship and country
-                 * 
                  * IDEA: additional table citizenships (person_id, country_id)
                  */
         execute(query);
+        query = """
+                CREATE TABLE IF NOT EXISTS citizenships
+                ( person_id int REFERENCES people (id)
+                , country_id int REFERENCES countries (id)
+                )
+                """;
+        execute(query);
     }
 
-    private void populate(int noOfPeople, int maxCitizenships) throws SQLException {
+    private void initializePeopleTable(int noOfPeople) throws SQLException {
         Random rng = new Random();
-        int maxCountryIndex = findOne("SELECT MAX(id) AS max_id FROM countries", rs -> {
-            try {
-                return rs.getInt("max_id");
-            } catch (SQLException sqlException) {
-                throw new RuntimeException(sqlException);
-            }
-        }).get();
         List<List<Object>> argsList = new ArrayList<>();
         for (int i = 0; i < noOfPeople; i++) {
-            int noOfCitizenships = rng.nextInt(maxCitizenships + 1);
-            List<Integer> citizenships = new ArrayList<>();
-            for (int j = 0; j < noOfCitizenships; j++) {
-                citizenships.add(rng.nextInt(1, maxCountryIndex + 1));
-            }
-            argsList.add(
-                List.<Object>of(String.format("Name%d", i + 1),
-                rng.nextInt(100),
-                citizenships.toArray(new Integer[noOfCitizenships]))
-            );
+            argsList.add(List.<Object>of(
+                String.format("Name%d", i + 1),
+                rng.nextInt(100)
+            ));
         }
         batchExecute("""
-                INSERT INTO people (name, age, citizenship)
-                VALUES (?, ?, ?)
+                INSERT INTO people (name, age)
+                VALUES (?, ?)
                 """, argsList);
+    }
+
+    private void initializeCitizenshipsTable(int maxCitizenships) throws SQLException {
+        Random rng = new Random();
+        List<List<Object>> argsList = new ArrayList<>();
+        int maxCountryIndex = getMaxIDInTable("countries");
+        int maxPersonID = getMaxIDInTable("people");
+        for (int personID = 1; personID <= maxPersonID; personID++) {
+            int noOfCitizenships = rng.nextInt(maxCitizenships + 1);
+            Set<Integer> countryIDs = new TreeSet<>();
+            while (countryIDs.size() < noOfCitizenships) {
+                countryIDs.add(rng.nextInt(1, maxCountryIndex + 1));
+            }
+            for (var countryID : countryIDs) {
+                argsList.add(List.<Object>of(personID, countryID));
+            }
+        }
+        batchExecute("""
+                INSERT INTO citizenships (person_id, country_id)
+                VALUES (?, ?)
+                """, argsList);
+    }
+
+    private int getMaxIDInTable(String tableName) throws SQLException {
+        return findOne( "SELECT MAX(id) AS max_id FROM " + tableName, MAX_ID_MAPPER).get();
     }
 
     private void batchExecute(String query, List<List<Object>> argsList) throws SQLException {
@@ -147,7 +178,7 @@ public class CountriesDBHandler extends DatabaseHandler {
         }
     }
 
-    private void initializeContinentTable() throws SQLException {
+    private void initializeContinentsTable() throws SQLException {
         List<List<Object>> argsList = Arrays.stream(Continent.values())
             .map(Continent::getPrettyName)
             .map(List::<Object>of)
@@ -155,7 +186,7 @@ public class CountriesDBHandler extends DatabaseHandler {
         batchExecute("INSERT INTO continents (name) VALUES (?)", argsList);
     }
 
-    private void initializeCountryTable(List<Country> countries) throws SQLException {
+    private void initializeCountriesTable(List<Country> countries) throws SQLException {
         List<List<Object>> argsList = countries.stream()
             .map(c -> List.<Object>of(c.name(), c.population(), c.area(), c.continent().getPrettyName()))
             .collect(Collectors.toList());

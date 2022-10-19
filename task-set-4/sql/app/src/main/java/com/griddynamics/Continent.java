@@ -3,6 +3,7 @@ package com.griddynamics;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+// TODO change Continent into record, leave getContinentFromName(), add Integer id field
 public enum Continent {
     AFRICA,
     ANTARCTICA,

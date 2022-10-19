@@ -43,15 +43,6 @@ public class DatabaseHandler implements AutoCloseable {
                 throw new SQLException("Returned more than one record matching the query: " + query);
             }
             return Optional.of(found);
-            
-            // return switch (getRowCount(result)) {
-            //     case 0 -> Optional.empty();
-            //     case 1 -> {
-            //         result.next();
-            //         yield Optional.of(mapper.apply(result));
-            //     }
-            //     default -> throw new SQLException("Returned more than one record matching the query: " + query);
-            // };
         }
     }
 
@@ -65,22 +56,6 @@ public class DatabaseHandler implements AutoCloseable {
             return mappedRecords;
         }
     }
-
-    // public void getCursor(String tableName) throws SQLException {
-    //     String query = String.format("""
-    //             DECLARE curs CURSOR FOR SELECT * FROM %s
-    //             """, tableName);
-    //     stmt.execute(query);
-    //     query = """
-    //             OPEN curs
-    //             """;
-    //     stmt.execute(query);
-    //     query = """
-    //             RETURN NEXT curs
-    //             """;
-    //     // conn.commit();
-    //     ResultSet result = stmt.executeQuery(query);
-    // }
 
     @Override
     public void close() throws SQLException {
@@ -96,12 +71,5 @@ public class DatabaseHandler implements AutoCloseable {
         }
         return prepStmt;
     }
-
-    // private int getRowCount(ResultSet result) throws SQLException {
-    //     result.last();
-    //     int rowCount = result.getRow();
-    //     result.beforeFirst();
-    //     return rowCount;
-    // }
 
 }

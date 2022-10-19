@@ -19,6 +19,9 @@ public class BatchIterator<T> implements Iterator<T> {
     private int batchPos = 0;
 
     public BatchIterator(DatabaseHandler db, Function<ResultSet, T> mapper, int batchSize, String tableName) {
+        if (batchSize < 1) {
+            throw new IllegalArgumentException("Batch size cannot be lesser than 1");
+        }
         this.db = db;
         this.mapper = mapper;
         this.batchSize = batchSize;
@@ -34,7 +37,7 @@ public class BatchIterator<T> implements Iterator<T> {
         if (batchPos == batchSize || currentBatch == null) {
             currentBatch = getNextBatch();
         }
-        return !currentBatch.isEmpty();
+        return batchPos < currentBatch.size();
     }
 
     @Override

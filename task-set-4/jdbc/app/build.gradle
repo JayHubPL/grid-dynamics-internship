@@ -25,7 +25,9 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+    
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.0.1-jre'
@@ -39,6 +41,8 @@ dependencies {
     implementation 'com.griddynamics:generics-result:1.0'
 
     implementation 'com.zaxxer:HikariCP:5.0.1'
+
+    implementation 'org.mybatis:mybatis:3.5.11'
 }
 
 application {

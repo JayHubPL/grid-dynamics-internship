@@ -15,7 +15,7 @@ import com.griddynamics.usingutil.DAO;
 public class MovieDAO implements DAO<Movie> {
 
     private static final String tableName = "movies";
-    private static final Function<ResultSet, Movie> movieMapper = rs -> {
+    protected static final Function<ResultSet, Movie> MOVIE_MAPPER = rs -> {
         try {
             return new Movie(
                 rs.getString("id"),
@@ -35,8 +35,8 @@ public class MovieDAO implements DAO<Movie> {
 
     @Override
     public Optional<Movie> findById(String id) throws SQLException {
-        final String query = "SELECT * FROM actors WHERE id = ?";
-        return db.findOne(query, movieMapper, id);
+        final String query = "SELECT * FROM movies WHERE id = ?";
+        return db.findOne(query, MOVIE_MAPPER, id);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class MovieDAO implements DAO<Movie> {
     @Override
     public List<Movie> findAll() throws SQLException {
         final String query = "SELECT * FROM movies";
-        return db.findMany(query, movieMapper);
+        return db.findMany(query, MOVIE_MAPPER);
     }
 
     @Override
     public Iterator<Movie> scan() {
-        return new BatchIterator<>(db, movieMapper, batchSize, tableName);
+        return new BatchIterator<>(db, MOVIE_MAPPER, batchSize, tableName);
     }
     
 }

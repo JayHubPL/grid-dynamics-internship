@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS users;
+CREATE TABLE IF NOT EXISTS users (id varchar(100) UNIQUE NOT NULL, username varchar(100) NOT NULL);

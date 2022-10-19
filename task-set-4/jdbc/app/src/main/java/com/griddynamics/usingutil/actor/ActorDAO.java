@@ -15,7 +15,7 @@ import com.griddynamics.usingutil.DAO;
 public class ActorDAO implements DAO<Actor> {
 
     private static final String tableName = "actors";
-    private static final Function<ResultSet, Actor> actorMapper = rs -> {
+    protected static final Function<ResultSet, Actor> ACTOR_MAPPER = rs -> {
         try {
             return new Actor(
                 rs.getString("id"),
@@ -36,7 +36,7 @@ public class ActorDAO implements DAO<Actor> {
     @Override
     public Optional<Actor> findById(String id) throws SQLException {
         final String query = "SELECT * FROM actors WHERE id = ?";
-        return db.findOne(query, actorMapper, id);
+        return db.findOne(query, ACTOR_MAPPER, id);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class ActorDAO implements DAO<Actor> {
     @Override
     public List<Actor> findAll() throws SQLException {
         final String query = "SELECT * FROM actors";
-        return db.findMany(query, actorMapper);
+        return db.findMany(query, ACTOR_MAPPER);
     }
 
     @Override
     public Iterator<Actor> scan() {
-        return new BatchIterator<>(db, actorMapper, batchSize, tableName);
+        return new BatchIterator<>(db, ACTOR_MAPPER, batchSize, tableName);
     }
     
 }

@@ -29,6 +29,8 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
     implementation 'com.griddynamics:jdbc:1.0'
+
+    implementation 'org.javatuples:javatuples:1.2'
 }
 
 application {

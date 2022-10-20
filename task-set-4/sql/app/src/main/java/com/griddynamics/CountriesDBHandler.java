@@ -1,5 +1,10 @@
 package com.griddynamics;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -17,8 +24,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
+import com.griddynamics.jdbcutil.ConnectionAttributes;
 import com.griddynamics.jdbcutil.DatabaseConnectionProvider;
 import com.griddynamics.jdbcutil.DatabaseHandler;
+import com.griddynamics.jdbcutil.PGDataSource;
 
 public class CountriesDBHandler extends DatabaseHandler {
 
@@ -44,23 +53,39 @@ public class CountriesDBHandler extends DatabaseHandler {
         }
     };
 
-    public CountriesDBHandler(DatabaseConnectionProvider provider, List<Country> countries, int noOfPeople, int maxCitizenships) throws SQLException {
+    public CountriesDBHandler(DatabaseConnectionProvider provider, Path countriesPath, int noOfPeople, int maxCitizenships)
+    throws SQLException, FileNotFoundException, NoSuchElementException {
         super(provider);
         deleteTables();
         createTables();
         initializeContinentsTable();
         continentIdMapping = createContinentIdMapping();
-        initializeCountriesTable(countries);
+        initializeCountriesTable(readCountryDataFromCSV(countriesPath));
         initializePeopleTable(noOfPeople);
         initializeCitizenshipsTable(maxCitizenships);
     }
 
-    public CountriesDBHandler(DatabaseConnectionProvider provider, List<Country> countries, int noOfPeople) throws SQLException {
-        this(provider, countries, noOfPeople, DEFAULT_MAX_CITIZENSHIPS);
+    public CountriesDBHandler(DatabaseConnectionProvider provider, Path countriesPath, int noOfPeople)
+    throws SQLException, FileNotFoundException, NoSuchElementException {
+        this(provider, countriesPath, noOfPeople, DEFAULT_MAX_CITIZENSHIPS);
     }
 
-    public CountriesDBHandler(DatabaseConnectionProvider provider, List<Country> countries) throws SQLException {
-        this(provider, countries, DEFAULT_POPULATION_SIZE, DEFAULT_MAX_CITIZENSHIPS);
+    public CountriesDBHandler(DatabaseConnectionProvider provider, Path countriesPath)
+    throws SQLException, FileNotFoundException, NoSuchElementException {
+        this(provider, countriesPath, DEFAULT_POPULATION_SIZE, DEFAULT_MAX_CITIZENSHIPS);
+    }
+
+    private static final String DATABASE_NAME = "countries_stats";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "docker";
+    private static final int PORT = 5432;
+    private static final InetAddress IP = InetAddress.getLoopbackAddress();
+    private static final ConnectionAttributes DEFAULT_CONN_ATTRIBUTES = new ConnectionAttributes(IP, PORT, DATABASE_NAME, USER, PASSWORD);
+    private static final Path DEFAULT_COUNTRIES_PATH = Paths.get("app", "src", "main", "resources", "countries.csv");
+    
+    public static CountriesDBHandler getDefaultDBHandler()
+    throws FileNotFoundException, NoSuchElementException, SQLException {
+        return new CountriesDBHandler(new PGDataSource(DEFAULT_CONN_ATTRIBUTES), DEFAULT_COUNTRIES_PATH);
     }
 
     private Map<Integer, Continent> createContinentIdMapping() throws SQLException {
@@ -197,6 +222,21 @@ public class CountriesDBHandler extends DatabaseHandler {
                 WHERE continents.name = ?
                 """,
                 argsList);
+    }
+
+    private static List<Country> readCountryDataFromCSV(Path path) throws FileNotFoundException, NoSuchElementException {
+        List<Country> countries = new ArrayList<>();
+        try (Scanner scanner = new Scanner(new FileInputStream(path.toFile()))) {
+            scanner.useDelimiter(";|\\r\\n");
+            while (scanner.hasNext()) {
+                String name = scanner.next();
+                Continent continent = Continent.getContinentFromName(scanner.next());
+                int area = Integer.parseInt(scanner.next());
+                int population = Integer.parseInt(scanner.next());
+                countries.add(new Country(null, name, population, area, continent));
+            }
+        }
+        return countries;
     }
     
 }

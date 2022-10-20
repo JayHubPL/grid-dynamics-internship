@@ -1,4 +1,4 @@
-package com.griddynamics;
+package com.griddynamics.people;
 
 import java.sql.SQLException;
 import java.util.List;

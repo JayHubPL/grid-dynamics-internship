@@ -1,8 +1,11 @@
-package com.griddynamics;
+package com.griddynamics.countries;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.Function;
+
+import com.griddynamics.continents.Continent;
+import com.griddynamics.utils.CountriesDBHandler;
 
 public record Country(Integer id, String name, int population, int area, Continent continent) {
 

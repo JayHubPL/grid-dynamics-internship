@@ -4,6 +4,10 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.griddynamics.people.Person;
+import com.griddynamics.utils.CountriesDBHandler;
+
+// TODO remove this class
 public class Main {
     
     public static void main(String[] args) throws SQLException, FileNotFoundException {

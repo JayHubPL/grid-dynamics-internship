@@ -1,4 +1,4 @@
-package com.griddynamics;
+package com.griddynamics.continents;
 
 import java.sql.SQLException;
 import java.util.List;

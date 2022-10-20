@@ -1,4 +1,4 @@
-package com.griddynamics;
+package com.griddynamics.utils;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
+import com.griddynamics.continents.Continent;
+import com.griddynamics.countries.Country;
 import com.griddynamics.jdbcutil.ConnectionAttributes;
 import com.griddynamics.jdbcutil.DatabaseConnectionProvider;
 import com.griddynamics.jdbcutil.DatabaseHandler;

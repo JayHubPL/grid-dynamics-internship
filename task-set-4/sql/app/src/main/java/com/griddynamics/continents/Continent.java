@@ -1,4 +1,4 @@
-package com.griddynamics;
+package com.griddynamics.continents;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

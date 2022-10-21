@@ -41,7 +41,7 @@ public class CountriesDBHandler extends DatabaseHandler {
         }
     };
 
-    public static final int DEFAULT_POPULATION_SIZE = 100;
+    public static final int DEFAULT_POPULATION_SIZE = 10000;
     public static final int DEFAULT_MAX_CITIZENSHIPS = 4;
     public static Map<Integer, Continent> continentIdMapping = Collections.emptyMap(); // this is not the ideal solution but it does the job
     private static final Function<ResultSet, Pair<Integer, Continent>> mapper = rs -> {
@@ -145,7 +145,8 @@ public class CountriesDBHandler extends DatabaseHandler {
         execute(query);
         query = """
                 CREATE TABLE IF NOT EXISTS citizenships
-                ( person_id int REFERENCES people (id)
+                ( id SERIAL PRIMARY KEY
+                , person_id int REFERENCES people (id)
                 , country_id int REFERENCES countries (id)
                 )
                 """;

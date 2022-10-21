@@ -17,7 +17,7 @@ public class ContinentQueries {
         this.db = db;
     }
 
-    // 1. Count of countries for each continent (name of the continent and number)
+    // 1. Number of countries for each continent (name of the continent and number)
     public List<Pair<Integer, String>> numberOfCountriesOnEachContinent() throws SQLException {
         return db.findMany("""
                 SELECT COUNT(*) AS countries_count, continents.name
@@ -39,8 +39,9 @@ public class ContinentQueries {
     // 3. Average population density per continent (name of the continent and number)
     public List<Pair<Integer, String>> continentsAveragePopulationDensity() throws SQLException {
         return db.findMany("""
-                SELECT AVG(CAST(countries.population AS double)/countries.area) AS average_continent_density , continents.name
+                SELECT AVG(CAST(countries.population AS float)/countries.area) AS average_continent_density , continents.name
                 FROM continents JOIN countries ON continents.id = countries.continent_id
+                WHERE countries.area > 0
                 GROUP BY continents.name
                 """, ResultSetMappers.INT_STRING_MAPPER);
     }
@@ -48,12 +49,12 @@ public class ContinentQueries {
     // 4. For each continent, find a country with the smallest area (print continent name, country name and area)
     public List<Triplet<String, String, Integer>> smallestCountryOnTheContinent() throws SQLException {
         return db.findMany("""
-                SELECT continent_name, countries.name, min_area 
-                FROM ( SELECT continents.name AS continent_name, MIN(countries.area) AS min_area
+                SELECT subquery.continent_name, countries.name, subquery.min_area
+                FROM ( SELECT continents.name AS continent_name, countries.continent_id, MIN(countries.area) AS min_area
                     FROM countries JOIN continents ON continents.id = countries.continent_id
-                    GROUP BY continents.name, countries.name
+                    GROUP BY continents.name, countries.continent_id
                 ) AS subquery
-                LEFT JOIN countries ON countries.area = subquery.min_area
+                JOIN countries ON countries.area = subquery.min_area
                 """, ResultSetMappers.STR_STR_INT_MAPPER);
     }
 

@@ -26,9 +26,9 @@ public class Main {
         int sleepDuration = 1;
 
         // Using single connection
-        CashedDataSource cashedDataSource = new CashedDataSource(connectionAttributes);
-        runThreads(cashedDataSource, threadNo, sleepDuration);
-        cashedDataSource.close();
+        CachedDataSource cachedDataSource = new CachedDataSource(connectionAttributes);
+        runThreads(cachedDataSource, threadNo, sleepDuration);
+        cachedDataSource.close();
 
         // Using connection pooling
         HikariConfig config = new HikariConfig();

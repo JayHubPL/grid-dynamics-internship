@@ -14,24 +14,24 @@ import javax.sql.DataSource;
 import com.griddynamics.jdbcutil.ConnectionAttributes;
 import com.griddynamics.jdbcutil.JDBCDriver;
 
-public class CashedDataSource implements DataSource, Closeable {
+public class CachedDataSource implements DataSource, Closeable {
     
-    private final Connection cashedConn;
+    private final Connection cachedConn;
     
-    public CashedDataSource(ConnectionAttributes attributes) throws SQLException {
-        cashedConn = new JDBCDriver(attributes).getConnection();
+    public CachedDataSource(ConnectionAttributes attributes) throws SQLException {
+        cachedConn = new JDBCDriver(attributes).getConnection();
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        return cashedConn;
+        return cachedConn;
     }
 
     @Override
     public void close() throws IOException {
         try {
-            if (cashedConn != null && !cashedConn.isClosed()) {
-                cashedConn.close();
+            if (cachedConn != null && !cachedConn.isClosed()) {
+                cachedConn.close();
             }
         } catch (SQLException sqlException) {
             throw new IOException(sqlException);

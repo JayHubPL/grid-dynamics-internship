@@ -29,6 +29,15 @@ public class Main {
         CachedDataSource cachedDataSource = new CachedDataSource(connectionAttributes);
         runThreads(cachedDataSource, threadNo, sleepDuration);
         cachedDataSource.close();
+        /*
+         * All 10 threads finished in 10.097000 seconds
+         * 
+         * We didn't achieve any profit using only one connection
+         * with 10 threads. First thread blocks the access to the connection
+         * for the rest of threads and releases it only when it finishes its task.
+         * That's why the total time is the product of task duration and number of threads.
+         * We didn't achieve parallelization.
+         */
 
         // Using connection pooling
         HikariConfig config = new HikariConfig();
@@ -40,6 +49,15 @@ public class Main {
         HikariDataSource hikariDataSource = new HikariDataSource(config);
         runThreads(hikariDataSource, threadNo, sleepDuration);
         hikariDataSource.close();
+        /*
+         * All 10 threads finished in 1.016000 seconds
+         * 
+         * All threads acquired their own unblocked connection. Each of them ran in parrarel
+         * so the total time is equal to the duration of a singular task. We did not
+         * waste time on creating/closing connections, only on accessing and returning them
+         * to the pool.
+         * We did achieve parallelization with the benefits of connection pooling.
+         */
     }
 
     public static void runThreads(DataSource ds, int threadNo, int sleepDuration)

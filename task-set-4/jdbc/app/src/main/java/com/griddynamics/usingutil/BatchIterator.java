@@ -27,7 +27,8 @@ public class BatchIterator<T> implements Iterator<T> {
         this.batchSize = batchSize;
         batchQuery = String.format("""
                 SELECT *
-                FROM (SELECT ROW_NUMBER() OVER() AS row, * FROM %s) AS subquery
+                FROM (SELECT ROW_NUMBER() OVER() AS row, * FROM %1$s) AS subquery
+                ORDER BY %1$s.id
                 WHERE row > ? AND row <= ?
                 """, tableName);
     }

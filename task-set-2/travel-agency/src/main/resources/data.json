@@ -1,0 +1,320 @@
+[
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Warsaw",
+    "destinationCode": "WAW"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Wroclaw",
+    "destinationCode": "WRO"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Warsaw",
+    "destinationCode": "WMI"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Gdansk",
+    "destinationCode": "GDN"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Bari",
+    "destinationCode": "BRI"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Bologna",
+    "destinationCode": "BLQ"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Milan",
+    "destinationCode": "MXP"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Milan",
+    "destinationCode": "LIN"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Milan",
+    "destinationCode": "BGY"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Madrid",
+    "destinationCode": "MAD"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Barcelona",
+    "destinationCode": "BCN"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Ibiza",
+    "destinationCode": "IBZ"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Bergen",
+    "destinationCode": "GCO"
+  },
+  {
+    "origin": "Krakow",
+    "originCode": "KRK",
+    "destination": "Stockholm",
+    "destinationCode": "ARN"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Berlin",
+    "destinationCode": "BER"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Wroclaw",
+    "destinationCode": "WRO"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Brussels",
+    "destinationCode": "BRU"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Gdansk",
+    "destinationCode": "GDN"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Paris",
+    "destinationCode": "CDG"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Stockholm",
+    "destinationCode": "ARN"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Bologna",
+    "destinationCode": "BLQ"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Milan",
+    "destinationCode": "MXP"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Milan",
+    "destinationCode": "BGY"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Madrid",
+    "destinationCode": "MAD"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Alicante",
+    "destinationCode": "ALC"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Lisbon",
+    "destinationCode": "LIS"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "London",
+    "destinationCode": "LHR"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Dublin",
+    "destinationCode": "DUB"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Istanbul",
+    "destinationCode": "IST"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Cairo",
+    "destinationCode": "CAI"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Chicago",
+    "destinationCode": "ORD"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Los Angeles",
+    "destinationCode": "LAX"
+  },
+  {
+    "origin": "Warsaw",
+    "originCode": "WAW",
+    "destination": "Seoul",
+    "destinationCode": "ICN"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Berlin",
+    "destinationCode": "BER"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Warsaw",
+    "destinationCode": "WAW"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Krakow",
+    "destinationCode": "KRK"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Gdansk",
+    "destinationCode": "GDN"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Barcelona",
+    "destinationCode": "BCN"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Bologna",
+    "destinationCode": "BLQ"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Milan",
+    "destinationCode": "BGY"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Zurich",
+    "destinationCode": "ZRH"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Stockholm",
+    "destinationCode": "ARN"
+  },
+  {
+    "origin": "Wroclaw",
+    "originCode": "WRO",
+    "destination": "Alicante",
+    "destinationCode": "ALC"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Frankfurt",
+    "destinationCode": "FRA"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Amsterdam",
+    "destinationCode": "AMS"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Bergen",
+    "destinationCode": "BGO"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Malta",
+    "destinationCode": "MLA"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Barcelona",
+    "destinationCode": "BCN"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Reykjavik",
+    "destinationCode": "KEF"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Tbilisi",
+    "destinationCode": "TBS"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Dortmund",
+    "destinationCode": "DTM"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Vienna",
+    "destinationCode": "VIE"
+  },
+  {
+    "origin": "Gdansk",
+    "originCode": "GDN",
+    "destination": "Ottawa",
+    "destinationCode": "YOW"
+  }
+]

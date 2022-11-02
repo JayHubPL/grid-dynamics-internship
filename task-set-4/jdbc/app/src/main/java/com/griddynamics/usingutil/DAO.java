@@ -9,7 +9,7 @@ import com.griddynamics.Result;
 
 public interface DAO<T> {
 
-    Optional<T> findById(String id) throws SQLException;
+    Optional<T> findById(Object id) throws SQLException;
     Result<T, SQLException> save(T elem);
     List<T> findAll() throws SQLException;
     Iterator<T> scan();

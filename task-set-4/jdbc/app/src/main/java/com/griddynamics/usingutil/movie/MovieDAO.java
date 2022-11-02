@@ -34,7 +34,7 @@ public class MovieDAO implements DAO<Movie> {
     }
 
     @Override
-    public Optional<Movie> findById(String id) throws SQLException {
+    public Optional<Movie> findById(Object id) throws SQLException {
         final String query = "SELECT * FROM movies WHERE id = ?";
         return db.findOne(query, MOVIE_MAPPER, id);
     }

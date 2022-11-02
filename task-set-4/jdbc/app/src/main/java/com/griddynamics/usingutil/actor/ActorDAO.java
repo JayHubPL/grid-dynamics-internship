@@ -34,7 +34,7 @@ public class ActorDAO implements DAO<Actor> {
     }
 
     @Override
-    public Optional<Actor> findById(String id) throws SQLException {
+    public Optional<Actor> findById(Object id) throws SQLException {
         final String query = "SELECT * FROM actors WHERE id = ?";
         return db.findOne(query, ACTOR_MAPPER, id);
     }

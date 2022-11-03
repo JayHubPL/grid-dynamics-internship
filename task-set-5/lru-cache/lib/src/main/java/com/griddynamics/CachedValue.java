@@ -39,13 +39,13 @@ public class CachedValue<V> {
     }
 
     /**
-     * Allows obtaining raw value if the value status allows for it. Otherwise an
-     * exception is thrown.
+     * Allows obtaining raw value if the value acquisition status allows for it.
+     * Otherwise an exception is thrown.
      * @return value of type {@code V} stored in this {@code CachedValue}
      */
-    public V getValue() {
+    public V unwrap() {
         if (!status.equals(ValueAcquisitionStatus.OK)) {
-            throw new IllegalStateException("Tried to read value whose status is " + status.name());
+            throw new IllegalStateException("Tried to unwrap value whose status is " + status.name());
         }
         return value;
     }

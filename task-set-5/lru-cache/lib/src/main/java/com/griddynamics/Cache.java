@@ -30,25 +30,28 @@ public abstract class Cache<K, V> implements EvictionStrategy {
 
     /***
      * Allows to get {@code value}s from the cache using the {@code key}.
+     * {@code CachedValue} obejct also contains information on the time of
+     * adding this record to cache and the value acquisition status. It should
+     * be handled properly before trying to extract the value within by checking
+     * the acquisition status and confirming that the value was obtained successfully.
      * @param key used to retrieve {@code value} associated with it
-     * @return {@code Optional} containg possibly-{@code null} value mapped to the provied {@code key}
+     * @return {@code Optional} containg {@code CachedValue} object mapped to the provied {@code key}
      * or an empty {@code Optional} instance if no such mapping exists.
      */
-    public Optional<V> get(K key) {
-        CachedValue<V> cachedValue = entries.get(key);
-        return (cachedValue == null) ? Optional.empty() : Optional.ofNullable(cachedValue.getValue());
+    public Optional<CachedValue<V>> get(K key) {
+        return Optional.ofNullable(entries.get(key));
     }
 
     /**
      * Creates/updates an entry in the cache. If no mapping for the given {@code key} was present
-     * the pair of that key and {@code value} is added evicting enough entries to not pass the specified
+     * the pair of that key and {@code value} is added evicting an entry to not pass the specified
      * maximum {@code capacity}. If there already was a {@code value} associated with the {@code key},
      * the value is overriden.
      * @param key used to map {@code value}
      * @param value which must be stored
      */
     public void put(K key, V value) {
-        while (entries.size() >= capacity) {
+        if (entries.size() >= capacity) {
             evict();
         }
         entries.put(key, new CachedValue<>(value));

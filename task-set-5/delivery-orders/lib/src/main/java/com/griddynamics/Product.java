@@ -1,5 +1,3 @@
 package com.griddynamics;
 
-public interface Product {
-
-}
+public record Product(int id, String name, double price) {}

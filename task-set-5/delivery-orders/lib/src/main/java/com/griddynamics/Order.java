@@ -2,39 +2,48 @@ package com.griddynamics;
 
 import java.util.List;
 
+import com.griddynamics.stateimpl.*;
+
 public class Order {
     
-    private final long id;
+    private final int ID;
+    private final OrderSource source;
     private final List<Product> products;
-    private final String comments;
-    private final OrderGiver orderGiver;
-    private final List<OrderTaker> orderTakers;
-    private OrderStatus status;
+    private OrderState state;
 
-    public Order(long id, List<Product> products, String comments, OrderGiver orderGiver,
-            List<OrderTaker> orderTakers) {
-        this.id = id;
+    public Order(int ID, OrderSource source, List<Product> products) {
+        this.ID = ID;
+        this.source = source;
         this.products = products;
-        this.comments = comments;
-        this.orderGiver = orderGiver;
-        this.orderTakers = orderTakers;
-        status = OrderStatus.WAITING;
+        state = new Waiting();
+        state.notifySubscribers(this);
     }
 
-    /**
-     * Advances the order status by one step changing its status and returning it.
-     * If order has already {@code DELIVERED} status, an exception is thrown.
-     * @return new current status of the order
-     */
-    public OrderStatus nextStep() {
-        status = switch (status) {
-            case WAITING -> OrderStatus.PREPARATION;
-            case PREPARATION -> OrderStatus.READY_FOR_DELIVERY;
-            case READY_FOR_DELIVERY -> OrderStatus.BEING_DELIVERED;
-            case BEING_DELIVERED -> OrderStatus.DELIVERED;
-            case DELIVERED -> throw new IllegalStateException("Order has already been delivered");
+    public void advance() {
+        state = switch (state.stateEnum()) {
+            case WAITING -> new Preparation();
+            case PREPARATION -> new ReadyForDelivery();
+            case READY_FOR_DELIVERY -> new BeingDelivered();
+            case BEING_DELIVERED -> new Delivered();
+            default -> throw new IllegalStateException("Order has already been finished");
         };
-        return status;
+        state.notifySubscribers(this);
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public OrderState getState() {
+        return state;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public OrderSource getSource() {
+        return source;
     }
 
 }

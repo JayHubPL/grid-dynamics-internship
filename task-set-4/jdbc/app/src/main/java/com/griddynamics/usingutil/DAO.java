@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import com.griddynamics.Result;
 
-public interface DAO<T> {
+public interface DAO<T, ID> {
 
-    Optional<T> findById(Object id) throws SQLException;
+    Optional<T> findById(ID id) throws SQLException;
     Result<T, SQLException> save(T elem);
     List<T> findAll() throws SQLException;
     Iterator<T> scan();

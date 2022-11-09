@@ -12,7 +12,7 @@ import com.griddynamics.jdbcutil.DatabaseHandler;
 import com.griddynamics.usingutil.BatchIterator;
 import com.griddynamics.usingutil.DAO;
 
-public class ActorDAO implements DAO<Actor> {
+public class ActorDAO implements DAO<Actor, String> {
 
     private static final String tableName = "actors";
     protected static final Function<ResultSet, Actor> ACTOR_MAPPER = rs -> {
@@ -34,7 +34,7 @@ public class ActorDAO implements DAO<Actor> {
     }
 
     @Override
-    public Optional<Actor> findById(Object id) throws SQLException {
+    public Optional<Actor> findById(String id) throws SQLException {
         final String query = "SELECT * FROM actors WHERE id = ?";
         return db.findOne(query, ACTOR_MAPPER, id);
     }

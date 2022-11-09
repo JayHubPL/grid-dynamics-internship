@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ import com.griddynamics.Result;
 import com.griddynamics.jdbcutil.DatabaseHandler;
 
 @ExtendWith(MockitoExtension.class)
-public abstract class AbstractDAOTest<T> {
+public abstract class AbstractDAOTest<T, ID> {
     
     private static final int BATCH_SIZE = 3;
     private final T dataExample;
@@ -37,14 +38,16 @@ public abstract class AbstractDAOTest<T> {
     private final String SELECT_WHERE_ID_QUERY;
     private final String SELECT_ALL_QUERY;
     private final Function<ResultSet, T> mapper;
-    private final DAO<T> dao;
+    private final DAO<T, ID> dao;
+    private final Supplier<ID> idSupplier;
     private DataSupplier<T> dataSupplier;
     
 
-    protected AbstractDAOTest(Class<? extends DAO<T>> daoClazz, Class<? extends DataSupplier<T>> dataSupplierClazz, String tableName, Function<ResultSet, T> mapper)
+    protected AbstractDAOTest(Class<? extends DAO<T, ID>> daoClazz, Class<? extends DataSupplier<T>> dataSupplierClazz, String tableName, Function<ResultSet, T> mapper, Supplier<ID> idSupplier)
     throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         mockedDB = mock(DatabaseHandler.class);
         dao = daoClazz.getConstructor(DatabaseHandler.class, int.class).newInstance(mockedDB, BATCH_SIZE);
+        this.idSupplier = idSupplier;
         dataSupplier = dataSupplierClazz.getConstructor().newInstance();
         dataExample = dataSupplier.next();
         this.mapper = mapper;
@@ -64,7 +67,7 @@ public abstract class AbstractDAOTest<T> {
     public void findById_OneRecordWithTheSpecifiedID_ShouldReturnOptionalWithTheRecord() throws SQLException {
         when(mockedDB.findOne(eq(SELECT_WHERE_ID_QUERY), eq(mapper), any()))
             .thenReturn(Optional.of(dataExample));
-        var result = dao.findById("any");
+        var result = dao.findById(idSupplier.get());
         assertTrue(result.isPresent());
         assertEquals(dataExample, result.get());
     }
@@ -73,7 +76,7 @@ public abstract class AbstractDAOTest<T> {
     public void findById_NoRecordWithTheSpecifiedID_ShouldReturnEmptyOptional() throws SQLException {
         when(mockedDB.findOne(eq(SELECT_WHERE_ID_QUERY), eq(mapper), any()))
             .thenReturn(Optional.empty());
-        var result = dao.findById("0");
+        var result = dao.findById(idSupplier.get());
         assertFalse(result.isPresent());
     }
 

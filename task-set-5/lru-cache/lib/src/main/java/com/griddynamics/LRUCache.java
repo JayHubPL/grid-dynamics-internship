@@ -17,7 +17,7 @@ public class LRUCache<K, V> extends Cache<K, V> {
      * @param capacity defines maximum number of cached entries
      */
     public LRUCache(int capacity) {
-        super(capacity, new LinkedHashMap<K, CachedValue<V>>(MAP_CAPPACITY_MULT * capacity) {
+        super(capacity, new LinkedHashMap<K, CachedValue<V>>(MAP_CAPPACITY_MULT * capacity, .75f, true) {
             
             @Override
             protected boolean removeEldestEntry(Entry<K, CachedValue<V>> eldest) {

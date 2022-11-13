@@ -28,7 +28,7 @@ public class LRUCacheTest {
     }
 
     @Test
-    public void constructor_CapacityIsPositive_ShouldThrow() {
+    public void constructor_CapacityIsPositive_ShouldNotThrow() {
         assertDoesNotThrow(() -> {
             new LRUCache<String, String>(1);
         });

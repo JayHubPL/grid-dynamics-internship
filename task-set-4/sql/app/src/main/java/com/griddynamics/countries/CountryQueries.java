@@ -115,7 +115,7 @@ public class CountryQueries {
         return db.findMany(String.format("""
                 SELECT name
                 FROM countries
-                WHERE name LIKE \'%c%%\'
+                WHERE name ILIKE \'%c%%\'
                 """, c), ResultSetMappers.STRING_MAPPER);
     }
 
@@ -124,7 +124,7 @@ public class CountryQueries {
         return db.findMany(String.format("""
                 SELECT name
                 FROM countries
-                WHERE name LIKE \'%%%c%%\'
+                WHERE name ILIKE \'%%%c%%\'
                 ORDER BY name
                 """, c), ResultSetMappers.STRING_MAPPER);
     }

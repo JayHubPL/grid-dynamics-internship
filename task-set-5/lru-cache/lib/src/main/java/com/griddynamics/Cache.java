@@ -43,20 +43,6 @@ public abstract class Cache<K, V> implements EvictionStrategy {
     }
 
     /**
-     * Allows for extraction of values from the cache removing the {@code CachedValue}
-     * and {@code Optional} wrappers. If no mapping exists for the {@code key} or mapped
-     * value is {@code null}, a {@code null} is returned. Otherwise the {@code value} is returned.
-     * There is no way to distinguish lack of mapping from the actual {@code null} value using
-     * this method.
-     * @param key used to retrieve {@code value} associated with it
-     * @return non-{@code null} {@code value} if mapping exists, otherwise returns {@code null}
-     */
-    public V getUnwrap(K key) {
-        var cachedValue = entries.get(key);
-        return (cachedValue == null) ? null : cachedValue.unwrap();
-    }
-
-    /**
      * Creates/updates an entry in the cache. If no mapping for the given {@code key} was present
      * the pair of that key and {@code value} is added evicting an entry to not pass the specified
      * maximum {@code capacity}. If there already was a {@code value} associated with the {@code key},

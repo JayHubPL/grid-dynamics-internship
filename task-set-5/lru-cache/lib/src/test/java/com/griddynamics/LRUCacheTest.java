@@ -2,7 +2,6 @@ package com.griddynamics;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,23 +45,23 @@ public class LRUCacheTest {
     }
 
     @Test
-    public void put_ValueIsNull_ShouldCorrectlyAdd() {
+    public void put_ValueIsNull_ShouldThrow() {
         LRUCache<String, String> cache = new LRUCache<>(5);
-        cache.put("Key", null);
-        assertEquals(1, getCacheSize(cache));
-        assertNull(cache.getUnwrap("Key"));
+        assertThrows(IllegalArgumentException.class, () -> {
+            cache.put("Key", null);
+        });
     }
 
     @Test
-    public void get_ValueIsNull_ShouldReturnOptionalWithNull() {
+    public void get_ValueIsPresent_ShouldReturnOptionalWithCorrectValue() {
         LRUCache<String, String> cache = new LRUCache<>(5);
-        cache.put("Key", null);
+        cache.put("Key", "Value");
         var optCachedValue = cache.get("Key");
         assertTrue(optCachedValue.isPresent());
         var cachedValue = optCachedValue.get();
         assertEquals(ValueAcquisitionStatus.OK, cachedValue.getValueStatus());
         var value = cachedValue.unwrap();
-        assertNull(value);
+        assertEquals("Value", value);
     }
 
     @Test
@@ -83,22 +82,6 @@ public class LRUCacheTest {
         assertThrows(IllegalStateException.class, () -> {
             cachedValue.unwrap();
         });
-    }
-
-    @Test
-    public void getUnwrap_ValueWasNotComputed_ShouldThrowOnUnwrap() {
-        LRUCache<String, String> cache = new LRUCache<>(5);
-        addFailedCacheRecord(cache, "Key");
-        assertThrows(IllegalStateException.class, () -> {
-            cache.getUnwrap("Key");
-        });
-    }
-
-    @Test
-    public void getUnwrap_NoMappingForTheGivenKey_ShouldReturnEmptyOptional() {
-        LRUCache<String, String> cache = new LRUCache<>(5);
-        var optValue = cache.get("Key");
-        assertTrue(optValue.isEmpty());
     }
 
     private <K> int getCacheSize(LRUCache<K, ?> cache) {

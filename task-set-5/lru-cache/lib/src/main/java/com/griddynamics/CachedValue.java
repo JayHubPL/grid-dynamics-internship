@@ -17,6 +17,9 @@ public class CachedValue<V> {
      * @param value to be stored in the cache
      */
     public CachedValue(V value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value cannot be null");
+        }
         this.value = value;
         creationDate = new Date();
         status = ValueAcquisitionStatus.OK;

@@ -10,6 +10,6 @@ public interface EvictionStrategy {
      * adding/updating cache entries without going over the maximum capacity
      * of the given cache.
      */
-    void evict();
+    default void evict() {};
 
 }

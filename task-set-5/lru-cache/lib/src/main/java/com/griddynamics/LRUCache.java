@@ -19,6 +19,13 @@ public class LRUCache<K, V> extends Cache<K, V> {
     public LRUCache(int capacity) {
         super(capacity, new LinkedHashMap<K, CachedValue<V>>(MAP_CAPPACITY_MULT * capacity, .75f, true) {
             
+            /*
+            * The method:
+            *     protected boolean removeEldestEntry(Entry<K, V> eldest)
+            * is responisible for handling eviction in the case of Segmented LRU strategy
+            * which is being used in this LRUCache class. No further implementation is
+            * required.
+            */
             @Override
             protected boolean removeEldestEntry(Entry<K, CachedValue<V>> eldest) {
                 return size() > capacity;
@@ -26,18 +33,5 @@ public class LRUCache<K, V> extends Cache<K, V> {
 
         });
     }
-
-    @Override
-    public void evict() {
-        /*
-         * The method:
-         *     protected boolean removeEldestEntry(Entry<K, V> eldest)
-         * is responisible for handling eviction in the case of Segmented LRU strategy
-         * which is being used in this LRUCache class. No further implementation is
-         * required.
-         */
-    }
-
-
 
 }

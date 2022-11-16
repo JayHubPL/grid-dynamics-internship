@@ -1,30 +1,37 @@
 package com.griddynamics;
 
+import java.util.EnumMap;
 import java.util.List;
 
+import com.griddynamics.ordersources.OrderSource;
 import com.griddynamics.stateimpl.*;
+import com.griddynamics.subscribers.Subscriber;
 
 public class Order {
     
     private final int ID;
     private final OrderSource source;
     private final List<Product> products;
+    private final EnumMap<OrderState.StateName, List<Subscriber>> subscribers;
+
     private OrderState state;
 
-    public Order(int ID, OrderSource source, List<Product> products) {
+    public Order(int ID, OrderSource source, List<Product> products, EnumMap<OrderState.StateName, List<Subscriber>> subscribers) {
+        System.out.printf("Order #%d polled\n", ID);
         this.ID = ID;
         this.source = source;
         this.products = products;
-        state = new Waiting();
+        this.subscribers = subscribers;
+        state = new Waiting(this.subscribers);
         state.notifySubscribers(this);
     }
 
     public void advance() {
-        state = switch (state.stateEnum()) {
-            case WAITING -> new Preparation();
-            case PREPARATION -> new ReadyForDelivery();
-            case READY_FOR_DELIVERY -> new BeingDelivered();
-            case BEING_DELIVERED -> new Delivered();
+        state = switch (state.getStateName()) {
+            case WAITING -> new Preparation(subscribers);
+            case PREPARATION -> new ReadyForDelivery(subscribers);
+            case READY_FOR_DELIVERY -> new BeingDelivered(subscribers);
+            case BEING_DELIVERED -> new Delivered(subscribers);
             default -> throw new IllegalStateException("Order has already been finished");
         };
         state.notifySubscribers(this);

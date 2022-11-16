@@ -1,20 +1,25 @@
 package com.griddynamics.stateimpl;
 
-import com.griddynamics.Order;
+import java.util.List;
+import java.util.Map;
+
 import com.griddynamics.OrderState;
+import com.griddynamics.subscribers.Subscriber;
 
-public class Preparation implements OrderState {
+/*
+ * Client is informed about the start of order preparation by the kitchen.
+ * Kichen should advance if it finished preparing the order.
+ */
 
-    @Override
-    public void notifySubscribers(Order order) {
-        /*
-         * Only client should be notified.
-         */
+public class Preparation extends OrderState {
+
+    public Preparation(Map<StateName, List<Subscriber>> orderSubscribers) {
+        super(orderSubscribers);
     }
 
     @Override
-    public State stateEnum() {
-        return State.PREPARATION;
+    public StateName getStateName() {
+        return OrderState.StateName.PREPARATION;
     }
     
 }

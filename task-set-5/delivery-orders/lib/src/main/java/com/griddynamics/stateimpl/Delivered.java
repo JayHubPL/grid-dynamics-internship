@@ -1,19 +1,25 @@
 package com.griddynamics.stateimpl;
 
-import com.griddynamics.Order;
+import java.util.List;
+import java.util.Map;
+
 import com.griddynamics.OrderState;
+import com.griddynamics.subscribers.Subscriber;
 
-public class Delivered implements OrderState {
+/*
+ * Client should be informed that the order was delivered.
+ * No advancing required.
+ */
 
-    @Override
-    public void notifySubscribers(Order order) {
-        // TODO Auto-generated method stub
-        
+public class Delivered extends OrderState {
+
+    public Delivered(Map<StateName, List<Subscriber>> orderSubscribers) {
+        super(orderSubscribers);
     }
 
     @Override
-    public State stateEnum() {
-        return State.DELIVERED;
+    public StateName getStateName() {
+        return OrderState.StateName.DELIVERED;
     }
     
 }

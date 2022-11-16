@@ -1,24 +1,26 @@
 package com.griddynamics.stateimpl;
 
-import com.griddynamics.Order;
+import java.util.List;
+import java.util.Map;
+
 import com.griddynamics.OrderState;
+import com.griddynamics.subscribers.Subscriber;
 
-public class ReadyForDelivery implements OrderState {
+/*
+ * Courier should be informed that they can pick up the order.
+ * Client should know that the order has been prepared and awaits transport.
+ * Courier should advance when they pick up the order and begin delivery.
+ */
 
-    @Override
-    public void notifySubscribers(Order order) {
-        /*
-         * Notified should be every courier in some proximity to
-         * to the party responsible for the order preparation.
-         * Some kind of search is required to determine which
-         * couriers are available and close enought to deliver
-         * the order to the client in shortest time possible.
-         */
+public class ReadyForDelivery extends OrderState {
+
+    public ReadyForDelivery(Map<StateName, List<Subscriber>> orderSubscribers) {
+        super(orderSubscribers);
     }
 
     @Override
-    public State stateEnum() {
-        return State.READY_FOR_DELIVERY;
+    public StateName getStateName() {
+        return OrderState.StateName.READY_FOR_DELIVERY;
     }
     
 }

@@ -1,28 +1,47 @@
 package com.griddynamics;
 
-/*
- * Use of a State behavioral design pattern altering the unimplemented
- * behavior of the notifySubscribers() method.
- */
-public interface OrderState {
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import com.griddynamics.subscribers.Subscriber;
+
+public abstract class OrderState {
     
+    protected final List<Subscriber> subscribers;
+
+    public OrderState(Map<StateName, List<Subscriber>> orderSubscribers) {
+        if (orderSubscribers == null) {
+            throw new IllegalArgumentException("orderSubscribers cannot be null");
+        }
+        this.subscribers = orderSubscribers.getOrDefault(getStateName(), Collections.emptyList());
+    }
+
     /**
      * For each stage different parties should be notified
-     * of the changed order state AS WELL AS THE CLIENT.
+     * of the changed order state as well as the client.
      * @param order provides notified parties with the
-     * additional order info, if implementation requires it
+     * additional order info in order to possibly
+     * advance them in the future
      */
-    void notifySubscribers(Order order);
+    public void notifySubscribers(Order order) {
+        subscribers.forEach(s -> s.notifyAboutTheOrder(order));
+    }
 
     /**
      * Gives an enum representation of the {@code OrderState}
      * implementing class.
-     * @return {@code State} enum matching the interface
+     * @return {@code State} enum matching the state
      * implemementation
      */
-    State stateEnum();
+    public abstract StateName getStateName();
 
-    public enum State {
+    @Override
+    public String toString() {
+        return getStateName().name();
+    }
+
+    public enum StateName {
         WAITING,
         PREPARATION,
         READY_FOR_DELIVERY,

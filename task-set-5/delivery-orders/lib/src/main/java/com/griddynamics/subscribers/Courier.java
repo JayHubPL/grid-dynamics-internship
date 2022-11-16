@@ -5,13 +5,16 @@ import java.util.concurrent.TimeUnit;
 
 import com.griddynamics.Order;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Courier implements Subscriber {
 
     @Override
     public void notifyAboutTheOrder(Order order) {
-        System.out.printf("[%d] %s\t%s\n", order.getID(), getClass().getSimpleName(), order.getState());
+        log.info(String.format("[%d] %s\t%s", order.getID(), getClass().getSimpleName(), order.getState()));
         CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(() -> {
-            System.out.printf("%s is advancing the order #%d\n", getClass().getSimpleName(), order.getID());
+            log.info(String.format("[%d] %s is advancing the order",  order.getID(), getClass().getSimpleName()));
             order.advance();
         });
     }

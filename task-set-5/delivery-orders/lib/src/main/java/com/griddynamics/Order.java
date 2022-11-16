@@ -7,6 +7,9 @@ import com.griddynamics.ordersources.OrderSource;
 import com.griddynamics.stateimpl.*;
 import com.griddynamics.subscribers.Subscriber;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Order {
     
     private final int ID;
@@ -17,11 +20,11 @@ public class Order {
     private OrderState state;
 
     public Order(int ID, OrderSource source, List<Product> products, EnumMap<OrderState.StateName, List<Subscriber>> subscribers) {
-        System.out.printf("Order #%d polled\n", ID);
         this.ID = ID;
         this.source = source;
         this.products = products;
         this.subscribers = subscribers;
+        log.info(String.format("[%d] Order created", ID));
         state = new Waiting(this.subscribers);
         state.notifySubscribers(this);
     }

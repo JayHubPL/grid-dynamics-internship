@@ -9,6 +9,18 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id 'maven-publish'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.griddynamics'
+            artifactId = 'generics-result'
+            version = '1.0'
+            from components.java
+        }
+    }
 }
 
 java {

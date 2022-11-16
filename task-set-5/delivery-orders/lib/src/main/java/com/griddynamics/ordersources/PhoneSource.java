@@ -12,6 +12,7 @@ import com.griddynamics.OrderState.StateName;
 import com.griddynamics.subscribers.Client;
 import com.griddynamics.subscribers.Courier;
 import com.griddynamics.subscribers.Kitchen;
+import com.griddynamics.subscribers.OrderDeleter;
 import com.griddynamics.subscribers.Subscriber;
 
 /*
@@ -23,7 +24,12 @@ import com.griddynamics.subscribers.Subscriber;
 
 public class PhoneSource implements OrderSource {
 
+    private final OrderDeleter deleter;
     private boolean sentOnce = false;
+
+    public PhoneSource(OrderDeleter deleter) {
+        this.deleter = deleter;
+    }
 
     @Override
     public List<Order> fetchWaitingOrders() {
@@ -44,7 +50,7 @@ public class PhoneSource implements OrderSource {
         subs.put(StateName.PREPARATION, List.of(kitchen, client));
         subs.put(StateName.READY_FOR_DELIVERY, List.of(courier, client));
         subs.put(StateName.BEING_DELIVERED, List.of(courier, client));
-        subs.put(StateName.DELIVERED, List.of(client));
+        subs.put(StateName.DELIVERED, List.of(deleter, client));
         return subs;
     }
 

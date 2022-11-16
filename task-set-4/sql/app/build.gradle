@@ -9,25 +9,6 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
-    id 'maven-publish'
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.griddynamics'
-            artifactId = 'jdbc'
-            version = '1.0'
-            from components.java
-        }
-    }
-
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(18)
-    }
 }
 
 repositories {
@@ -38,24 +19,18 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
-    
-    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.0.1-jre'
-
-    // implementation 'mysql:mysql-connector-java:8.0.30'
-
+    
     implementation 'org.postgresql:postgresql:42.5.0'
-
-    implementation 'com.h2database:h2:2.1.214'
-
-    implementation 'com.griddynamics:generics-result:1.0'
 
     implementation 'com.zaxxer:HikariCP:5.0.1'
 
-    implementation 'org.mybatis:mybatis:3.5.11'
+    implementation 'com.griddynamics:jdbc:1.0'
+
+    implementation 'org.javatuples:javatuples:1.2'
 }
 
 application {

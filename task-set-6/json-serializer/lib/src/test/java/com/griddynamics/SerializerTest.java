@@ -28,7 +28,7 @@ public class SerializerTest {
     public void serialize_ObjectContainsCollection_ListOfPrimitives_SerializeCorrectly() {
         List<Integer> listOfPrimitives = List.of(1, 2, 3);
         SimplePOJO obj = new SimplePOJO(listOfPrimitives);
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ 1, 2, 3 ] }";
         assertEquals(expected, actual);
     }
@@ -37,7 +37,7 @@ public class SerializerTest {
     public void serialize_ObjectContainsCollection_SetOfSerializablePOJOs_SerializeCorrectly() {
         Set<SimplePOJO> setOfPOJOs = new HashSet<>(List.of(new SimplePOJO("A"), new SimplePOJO(1)));
         SimplePOJO obj = new SimplePOJO(setOfPOJOs);
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String opt1 = "{ \"obj\": [ { \"obj\": \"A\" }, { \"obj\": 1 } ] }";
         String opt2 = "{ \"obj\": [ { \"obj\": 1 }, { \"obj\": \"A\" } ] }";
         assertTrue(actual.equals(opt1) || actual.equals(opt2));
@@ -47,7 +47,7 @@ public class SerializerTest {
     public void serialize_ObjectContainsCollection_QueueOfSerializableAndUnserializablePOJOs_SerializeOnlySerializable() {
         Queue<Object> queue = new ArrayDeque<>(List.of(new SimplePOJO("A"), new Object(), new SimplePOJO("B")));
         SimplePOJO obj = new SimplePOJO(queue);
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ { \"obj\": \"A\" }, { \"obj\": \"B\" } ] }";
         assertEquals(expected, actual);
     }
@@ -55,7 +55,7 @@ public class SerializerTest {
     @Test
     public void serialize_ObjectContainsCollection_CollectionIsEmpty_SerializeCorrectly() {
         SimplePOJO obj = new SimplePOJO(Collections.emptyList());
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [  ] }";
         assertEquals(expected, actual);
     }
@@ -63,7 +63,7 @@ public class SerializerTest {
     @Test
     public void serialize_ObjectContainsArray_OfSerializableObjects_SerializeCorrectly() {
         SimplePOJO obj = new SimplePOJO(new Object[]{new SimplePOJO("A"), 5, "str"});
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ { \"obj\": \"A\" }, 5, \"str\" ] }";
         assertEquals(expected, actual);
     }
@@ -71,28 +71,28 @@ public class SerializerTest {
     @Test
     public void serialize_ObjectContainsArray_ArrayIsEmpty_SerializeCorrectly() {
         SimplePOJO obj = new SimplePOJO(new Object[0]);
-        String actual = serializer.serialize(obj);
+        String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [  ] }";
         assertEquals(expected, actual);
     }
 
     @Test
     public void serialize_ObjectContainsPrimitives_SerializeCorrectly() {
-        String actual = serializer.serialize(new ContainsAllPrimitives());
+        String actual = serializer.serializeToJson(new ContainsAllPrimitives());
         String expected = "{ \"b\": 0, \"s\": 0, \"c\": \"\0\", \"d\": 0.0, \"bool\": false, \"f\": 0.0, \"i\": 0, \"l\": 0 }";
         assertEquals(expected, actual);
     }
 
     @Test
     public void serialize_ObjectContainsString_SerializeCorrectly() {
-        String actual = serializer.serialize(new SimplePOJO("text\"\\\b\f\n\r\t"));
+        String actual = serializer.serializeToJson(new SimplePOJO("text\"\\\b\f\n\r\t"));
         String expected = "{ \"obj\": \"text\"\\\b\f\n\r\t\" }";
         assertEquals(expected, actual);
     }
 
     @Test
     public void serialize_ObjectContainsNull_SerializeCorrectly() {
-        String actual = serializer.serialize(new SimplePOJO(null));
+        String actual = serializer.serializeToJson(new SimplePOJO(null));
         String expected = "{ \"obj\": null }";
         assertEquals(expected, actual);
     }
@@ -100,14 +100,14 @@ public class SerializerTest {
     @Test
     public void serialize_ObjectDoesNotHave_JsonSerializableAnnotation_ShouldThrow() {
         assertThrows(IllegalArgumentException.class, () -> {
-            serializer.serialize(Integer.valueOf(0));
+            serializer.serializeToJson(Integer.valueOf(0));
         });
     }
 
     @Test
     public void serialize_ObjectIsNull_ShouldThrow() {
         assertThrows(IllegalArgumentException.class, () -> {
-            serializer.serialize(null);
+            serializer.serializeToJson(null);
         });
     }
 

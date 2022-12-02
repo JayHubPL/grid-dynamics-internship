@@ -21,7 +21,7 @@ import com.griddynamics.annotations.JsonSerializable;
 
 public class Serializer {
 
-    public String serialize(Object obj) {
+    public String serializeToJson(Object obj) {
         if (obj == null) {
             throw new IllegalArgumentException("Object to serialize cannot be null");
         }
@@ -29,7 +29,7 @@ public class Serializer {
         if (!clazz.isAnnotationPresent(JsonSerializable.class)) {
             throw new IllegalArgumentException("The class " + clazz.getName() + " is not annotated with JsonSerializable");
         }
-        return serializeObj(obj);
+        return serialize(obj);
     }
 
     public Set<Class<?>> getAllJsonSerializableClassesInPackage(String packageName) throws IOException {
@@ -40,7 +40,7 @@ public class Serializer {
             .collect(Collectors.toSet());
     }
 
-    private String serializeObj(Object obj) {
+    private String serialize(Object obj) {
         return switch (getJsonDataType(obj)) {
             case NULL -> "null";
             case NUMBER -> ((Number)obj).toString();
@@ -56,7 +56,7 @@ public class Serializer {
         Collection<Object> collection = obj.getClass().isArray() ? List.of((Object[])obj) : (Collection<Object>)obj;
         return "[ " + collection.stream()
             .filter(this::isSerializable)
-            .map(o -> serializeObj(o))
+            .map(o -> serialize(o))
             .collect(Collectors.joining(", ")) + " ]";
     }
 
@@ -71,7 +71,7 @@ public class Serializer {
                 String jsonFieldName = field.isAnnotationPresent(JsonAttribute.class)
                     ? field.getAnnotation(JsonAttribute.class).jsonFieldName()
                     : field.getName();
-                jsonElements.put(jsonFieldName, serializeObj(field.get(obj)));
+                jsonElements.put(jsonFieldName, serialize(field.get(obj)));
             }
             return "{ " + jsonElements.entrySet().stream()
                 .map(e -> String.format("\"%s\": %s", e.getKey(), e.getValue()))

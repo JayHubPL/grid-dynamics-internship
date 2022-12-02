@@ -16,7 +16,7 @@ public class Client implements Subscriber {
 
     @Override
     public void notifyAboutOrder(Order order) {
-        log.info(String.format("[%d] %s\t%s", order.getID(), getClass().getSimpleName(), order.getState()));
+        log.info("[{}] {}\t{}", order.getID(), getClass().getSimpleName(), order.getState());
     }
     
     public ClientInfo getClientInfo() {

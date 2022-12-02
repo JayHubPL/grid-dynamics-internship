@@ -24,7 +24,7 @@ public class Order {
         this.source = source;
         this.products = products;
         this.subscribers = subscribers;
-        log.info(String.format("[%d] Order created", ID));
+        log.info("[{}] Order created", ID);
         state = new Waiting(this.subscribers);
         state.notifySubscribers(this);
     }

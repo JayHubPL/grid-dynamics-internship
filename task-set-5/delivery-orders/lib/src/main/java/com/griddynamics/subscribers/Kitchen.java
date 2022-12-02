@@ -12,9 +12,9 @@ public class Kitchen implements Subscriber {
 
     @Override
     public void notifyAboutOrder(Order order) {
-        log.info(String.format("[%d] %s\t%s", order.getID(), getClass().getSimpleName(), order.getState()));
+        log.info("[{}] {}\t{}", order.getID(), getClass().getSimpleName(), order.getState());
         CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(() -> {
-            log.info(String.format("[%d] %s is advancing the order",  order.getID(), getClass().getSimpleName()));
+            log.info("[{}] {} is advancing the order",  order.getID(), getClass().getSimpleName());
             order.advance();
         });
     }

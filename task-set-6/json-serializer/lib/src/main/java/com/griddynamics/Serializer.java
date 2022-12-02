@@ -65,12 +65,14 @@ public class Serializer {
             Map<String, String> jsonElements = new HashMap<>();
             for (Field field : obj.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
-                if (!isSerializable(field.get(obj))) {
-                    continue; // if not serializable, skip it
+                if (!(field.isAnnotationPresent(JsonAttribute.class)
+                && isSerializable(field.get(obj)))) {
+                    continue; // if not serializable or not marked for serialization, skip it
                 }
-                String jsonFieldName = field.isAnnotationPresent(JsonAttribute.class)
-                    ? field.getAnnotation(JsonAttribute.class).jsonFieldName()
-                    : field.getName();
+                String jsonFieldName = field.getAnnotation(JsonAttribute.class).jsonFieldName();
+                if (jsonFieldName.isEmpty()) {
+                    jsonFieldName = field.getName();
+                }
                 jsonElements.put(jsonFieldName, serialize(field.get(obj)));
             }
             return "{ " + jsonElements.entrySet().stream()

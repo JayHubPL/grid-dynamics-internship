@@ -1,11 +1,12 @@
 package com.griddynamics.helperclasses;
 
+import com.griddynamics.annotations.JsonAttribute;
 import com.griddynamics.annotations.JsonSerializable;
 
-@SuppressWarnings("unused")
 @JsonSerializable
 public class SimplePOJO {
     
+    @JsonAttribute
     private Object obj;
 
     public SimplePOJO(Object obj) {

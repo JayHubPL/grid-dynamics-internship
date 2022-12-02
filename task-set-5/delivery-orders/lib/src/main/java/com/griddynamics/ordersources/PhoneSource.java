@@ -1,9 +1,9 @@
 package com.griddynamics.ordersources;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.griddynamics.ClientInfo;
@@ -55,10 +55,9 @@ public class PhoneSource implements OrderSource {
     }
 
     private List<Order> generateOrders(int n, EnumMap<StateName, List<Subscriber>> subs) {
-        List<Order> orders = new ArrayList<>();
-        IntStream.range(0, n)
-            .forEach(i -> orders.add(new Order(i, this, Collections.emptyList(), subs)));
-        return orders;
+        return IntStream.range(0, n)
+            .mapToObj(i -> new Order(i, this, Collections.emptyList(), subs))
+            .collect(Collectors.toList());
     }
     
 }

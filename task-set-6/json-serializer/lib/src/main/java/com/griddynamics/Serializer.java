@@ -1,8 +1,9 @@
 package com.griddynamics;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,7 +12,9 @@ import com.google.common.primitives.Primitives;
 import com.griddynamics.annotations.JsonAttribute;
 import com.griddynamics.annotations.JsonSerializable;
 
+// OPTIONAL
 // TODO add cycle detection
+// TODO add support for maps
 
 public class Serializer {
 
@@ -21,7 +24,7 @@ public class Serializer {
         }
         Class<?> clazz = obj.getClass();
         if (!clazz.isAnnotationPresent(JsonSerializable.class)) {
-            throw new IllegalArgumentException("The class " + clazz.getSimpleName() + " is not annotated with JsonSerializable");
+            throw new IllegalArgumentException("The class " + clazz.getName() + " is not annotated with JsonSerializable");
         }
         return serializeObj(obj);
     }
@@ -32,32 +35,46 @@ public class Serializer {
             case NUMBER -> ((Number)obj).toString();
             case STRING -> "\"" + obj + "\"";
             case BOOLEAN -> (boolean)obj ? "true" : "false";
-            case ARRAY -> "[ " + Arrays.stream((Object[])obj)
-                .map(o -> serializeObj(o))
-                .collect(Collectors.joining(", ")) + " ]";
-            case OBJECT -> {
-                try {
-                    Map<String, String> jsonElements = new HashMap<>();
-                    for (Field field : obj.getClass().getDeclaredFields()) {
-                        field.setAccessible(true);
-                        String jsonFieldName = field.getName();
-                        if (field.isAnnotationPresent(JsonAttribute.class)) {
-                            jsonFieldName = field.getAnnotation(JsonAttribute.class).jsonFieldName();
-                        }
-                        if (getJsonDataType(field.get(obj)).equals(JsonDataType.OBJECT) &&
-                            !field.getType().isAnnotationPresent(JsonSerializable.class)) {
-                            continue; // if inner POJO is not serializable, skip it
-                        }
-                        jsonElements.put(jsonFieldName, serializeObj(field.get(obj)));
-                    }
-                    yield "{ " + jsonElements.entrySet().stream()
-                        .map(e -> String.format("\"%s\": %s", e.getKey(), e.getValue()))
-                        .collect(Collectors.joining(", ")) + " }";
-                } catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new RuntimeException("Serialization failed, " + e.getMessage());
-                }
-            }
+            case ARRAY -> serializeArray(obj);
+            case OBJECT -> serializeObject(obj);
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private String serializeArray(Object obj) {
+        Collection<Object> collection = obj.getClass().isArray() ? List.of((Object[])obj) : (Collection<Object>)obj;
+        return "[ " + collection.stream()
+            .filter(this::isSerializable)
+            .map(o -> serializeObj(o))
+            .collect(Collectors.joining(", ")) + " ]";
+    }
+
+    private String serializeObject(Object obj) {
+        try {
+            Map<String, String> jsonElements = new HashMap<>();
+            for (Field field : obj.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if (!isSerializable(field.get(obj))) {
+                    continue; // if not serializable, skip it
+                }
+                String jsonFieldName = field.isAnnotationPresent(JsonAttribute.class)
+                    ? field.getAnnotation(JsonAttribute.class).jsonFieldName()
+                    : field.getName();
+                jsonElements.put(jsonFieldName, serializeObj(field.get(obj)));
+            }
+            return "{ " + jsonElements.entrySet().stream()
+                .map(e -> String.format("\"%s\": %s", e.getKey(), e.getValue()))
+                .collect(Collectors.joining(", ")) + " }";
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new RuntimeException("Serialization failed, " + e.getMessage());
+        }
+    }
+
+    private boolean isSerializable(Object obj) {
+        if (!getJsonDataType(obj).equals(JsonDataType.OBJECT)) {
+            return true;
+        }
+        return obj.getClass().isAnnotationPresent(JsonSerializable.class);
     }
 
     private JsonDataType getJsonDataType(Object obj) {
@@ -65,7 +82,7 @@ public class Serializer {
             return JsonDataType.NULL;
         }
         Class<?> clazz = obj.getClass();
-        if (clazz.isArray()) {
+        if (clazz.isArray() || Collection.class.isAssignableFrom(clazz)) {
             return JsonDataType.ARRAY;
         }
         if (clazz.equals(String.class) || Primitives.wrap(clazz).equals(Character.class)) {

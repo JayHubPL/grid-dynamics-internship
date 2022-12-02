@@ -10,6 +10,6 @@ public interface Subscriber {
      * can be used to advance the order using {@code advance()} method.
      * @param order is a reference to the updated order
      */
-    void notifyAboutTheOrder(Order order);
+    void notifyAboutOrder(Order order);
 
 }

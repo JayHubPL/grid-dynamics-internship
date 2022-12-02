@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Kitchen implements Subscriber {
 
     @Override
-    public void notifyAboutTheOrder(Order order) {
+    public void notifyAboutOrder(Order order) {
         log.info(String.format("[%d] %s\t%s", order.getID(), getClass().getSimpleName(), order.getState()));
         CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(() -> {
             log.info(String.format("[%d] %s is advancing the order",  order.getID(), getClass().getSimpleName()));

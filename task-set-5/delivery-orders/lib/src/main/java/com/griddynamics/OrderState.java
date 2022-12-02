@@ -25,7 +25,7 @@ public abstract class OrderState {
      * advance them in the future
      */
     public void notifySubscribers(Order order) {
-        subscribers.forEach(s -> s.notifyAboutTheOrder(order));
+        subscribers.forEach(s -> s.notifyAboutOrder(order));
     }
 
     /**

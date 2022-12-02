@@ -12,7 +12,7 @@ public class OrderDeleter implements Subscriber {
     }
 
     @Override
-    public void notifyAboutTheOrder(Order order) {
+    public void notifyAboutOrder(Order order) {
         orderIntake.removeOrder(order);
     }
     

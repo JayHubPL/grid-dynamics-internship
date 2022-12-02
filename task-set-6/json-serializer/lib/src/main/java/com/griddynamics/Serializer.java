@@ -1,14 +1,17 @@
 package com.griddynamics;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.primitives.Primitives;
+import com.google.common.reflect.ClassPath;
 import com.griddynamics.annotations.JsonAttribute;
 import com.griddynamics.annotations.JsonSerializable;
 
@@ -27,6 +30,14 @@ public class Serializer {
             throw new IllegalArgumentException("The class " + clazz.getName() + " is not annotated with JsonSerializable");
         }
         return serializeObj(obj);
+    }
+
+    public Set<Class<?>> getAllJsonSerializableClassesInPackage(String packageName) throws IOException {
+        return ClassPath.from(ClassLoader.getSystemClassLoader()).getAllClasses().stream()
+            .filter(clazz -> clazz.getPackageName().equalsIgnoreCase(packageName))
+            .map(clazz -> clazz.load())
+            .filter(clazz -> clazz.isAnnotationPresent(JsonSerializable.class))
+            .collect(Collectors.toSet());
     }
 
     private String serializeObj(Object obj) {

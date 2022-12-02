@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
@@ -108,6 +109,12 @@ public class SerializerTest {
         assertThrows(IllegalArgumentException.class, () -> {
             serializer.serialize(null);
         });
+    }
+
+    @Test
+    public void getAllJsonSerializableClassesInPackage_Print() throws IOException {
+        serializer.getAllJsonSerializableClassesInPackage("com.griddynamics.helperclasses")
+            .forEach(System.out::println);
     }
 
 }

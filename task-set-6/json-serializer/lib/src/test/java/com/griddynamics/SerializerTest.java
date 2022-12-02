@@ -17,11 +17,13 @@ import org.junit.jupiter.api.Test;
 import com.griddynamics.helperclasses.ContainsAllPrimitives;
 import com.griddynamics.helperclasses.ContainsRenamedFields;
 import com.griddynamics.helperclasses.ContainsUnmarkedFields;
+import com.griddynamics.helperclasses.JsonValidator;
 import com.griddynamics.helperclasses.SimplePOJO;
 
 public class SerializerTest {
     
     private Serializer serializer = new Serializer();
+    private JsonValidator validator = new JsonValidator();
 
     @Test
     public void serialize_ObjectContainsCollection_ListOfPrimitives_SerializeCorrectly() {
@@ -30,6 +32,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ 1, 2, 3 ] }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -40,6 +43,7 @@ public class SerializerTest {
         String opt1 = "{ \"obj\": [ { \"obj\": \"A\" }, { \"obj\": 1 } ] }";
         String opt2 = "{ \"obj\": [ { \"obj\": 1 }, { \"obj\": \"A\" } ] }";
         assertTrue(actual.equals(opt1) || actual.equals(opt2));
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -49,6 +53,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ { \"obj\": \"A\" }, { \"obj\": \"B\" } ] }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -57,6 +62,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [  ] }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -65,6 +71,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [ { \"obj\": \"A\" }, 5, \"str\" ] }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -73,20 +80,23 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(obj);
         String expected = "{ \"obj\": [  ] }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
     public void serialize_ObjectContainsPrimitives_SerializeCorrectly() {
         String actual = serializer.serializeToJson(new ContainsAllPrimitives());
-        String expected = "{ \"b\": 0, \"s\": 0, \"c\": \"\0\", \"d\": 0.0, \"bool\": false, \"f\": 0.0, \"i\": 0, \"l\": 0 }";
+        String expected = "{ \"b\": 0, \"s\": 0, \"c\": \"\", \"d\": 0.0, \"bool\": false, \"f\": 0.0, \"i\": 0, \"l\": 0 }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
     public void serialize_ObjectContainsString_SerializeCorrectly() {
-        String actual = serializer.serializeToJson(new SimplePOJO("text\"\\\b\f\n\r\t"));
-        String expected = "{ \"obj\": \"text\"\\\b\f\n\r\t\" }";
+        String actual = serializer.serializeToJson(new SimplePOJO("text\\\\"));
+        String expected = "{ \"obj\": \"text\\\\\" }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -94,6 +104,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(new SimplePOJO(null));
         String expected = "{ \"obj\": null }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -101,6 +112,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(new ContainsUnmarkedFields());
         String expected = "{ \"marked\": null }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test
@@ -108,6 +120,7 @@ public class SerializerTest {
         String actual = serializer.serializeToJson(new ContainsRenamedFields());
         String expected = "{ \"dontRenameMe\": null, \"renamed\": null }";
         assertEquals(expected, actual);
+        assertTrue(validator.isValid(actual));
     }
 
     @Test

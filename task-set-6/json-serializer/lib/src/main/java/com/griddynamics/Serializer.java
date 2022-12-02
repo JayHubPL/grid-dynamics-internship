@@ -44,7 +44,7 @@ public class Serializer {
         return switch (getJsonDataType(obj)) {
             case NULL -> "null";
             case NUMBER -> ((Number)obj).toString();
-            case STRING -> "\"" + obj + "\"";
+            case STRING -> "\"" + obj.toString().replaceAll("\\p{C}", "") + "\"";
             case BOOLEAN -> (boolean)obj ? "true" : "false";
             case ARRAY -> serializeArray(obj);
             case OBJECT -> serializeObject(obj);

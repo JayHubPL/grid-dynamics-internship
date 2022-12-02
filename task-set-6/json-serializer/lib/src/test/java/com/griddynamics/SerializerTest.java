@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -15,11 +14,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.griddynamics.annotations.JsonSerializable;
 import com.griddynamics.helperclasses.ContainsAllPrimitives;
 import com.griddynamics.helperclasses.SimplePOJO;
 
-@SuppressWarnings("unused")
 public class SerializerTest {
     
     private Serializer serializer = new Serializer();

@@ -15,6 +15,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import com.griddynamics.helperclasses.ContainsAllPrimitives;
+import com.griddynamics.helperclasses.ContainsRenamedFields;
+import com.griddynamics.helperclasses.ContainsUnmarkedFields;
 import com.griddynamics.helperclasses.SimplePOJO;
 
 public class SerializerTest {
@@ -91,6 +93,20 @@ public class SerializerTest {
     public void serialize_ObjectContainsNull_SerializeCorrectly() {
         String actual = serializer.serializeToJson(new SimplePOJO(null));
         String expected = "{ \"obj\": null }";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void serialize_ObjectContainsPOJOs_UnmarkedAndMarkedForSerialization_SerializeOnlyMarked() {
+        String actual = serializer.serializeToJson(new ContainsUnmarkedFields());
+        String expected = "{ \"marked\": null }";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void serialize_ObjectContainsPOJOs_NotRenamedAndRenamed_SerializeWithCorrectNames() {
+        String actual = serializer.serializeToJson(new ContainsRenamedFields());
+        String expected = "{ \"dontRenameMe\": null, \"renamed\": null }";
         assertEquals(expected, actual);
     }
 

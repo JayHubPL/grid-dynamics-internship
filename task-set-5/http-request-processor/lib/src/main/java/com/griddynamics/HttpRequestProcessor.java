@@ -66,10 +66,10 @@ public class HttpRequestProcessor {
         }
 
         // log request contents
-        log.info("Method: " + request.method());
-        log.info("URI: " + request.uri().toASCIIString());
-        log.info("Body: " + request.getBody());
-        log.info("Username: " + username);
+        log.info("Method: {}", request.method());
+        log.info("URI: {}", request.uri().toASCIIString());
+        log.info("Body: {}", request.getBody());
+        log.info("Username: {}", username);
         
         // apply business logic
         try {

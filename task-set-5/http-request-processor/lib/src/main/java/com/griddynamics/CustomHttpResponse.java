@@ -10,22 +10,23 @@ import java.util.Optional;
 import javax.net.ssl.SSLSession;
 
 public class CustomHttpResponse implements HttpResponse<String> {
-    private HttpRequest request;
+    private final HttpRequest request;
     private HttpHeaders headers;
-    private int statusCode;
+    private HttpResponseStatus statusCode;
     private String body;
 
     public CustomHttpResponse(HttpRequest request) {
         this.request = request;
+        statusCode = HttpResponseStatus.OK;
     }
 
     @Override
     public int statusCode() {
-        return statusCode;
+        return statusCode.getStatusCode();
     }
 
     public void setStatusCode(HttpResponseStatus status) {
-        statusCode = status.getStatusCode();
+        statusCode = status;
     }
     
     public void setHeaders(HttpHeaders headers) {

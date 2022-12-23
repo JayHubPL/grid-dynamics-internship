@@ -111,22 +111,4 @@ public class HttpRequestProcessor {
         return true;
     }
 
-    public void setAuthenticationHeaderName(String name) {
-        authenticationHeaderName = name;
-    }
-
-    public void allowMethods(HttpMethod... methods) {
-        for (var method : methods) {
-            if (!allowedMethods.contains(method)) {
-                allowedMethods.add(method);
-            }
-        }
-    }
-
-    public void forbidMethods(HttpMethod... methods) {
-        for (var method : methods) {
-            allowedMethods.remove(method);
-        }
-    }
-
 }

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import javax.net.ssl.SSLSession;
 
-public class CustomHttpResponse implements com.griddynamics.interfaces.CustomHttpResponse<String> {
+public class CustomHttpResponse implements HttpResponse<String> {
     private HttpRequest request;
     private HttpHeaders headers;
     private int statusCode;
@@ -24,17 +24,14 @@ public class CustomHttpResponse implements com.griddynamics.interfaces.CustomHtt
         return statusCode;
     }
 
-    @Override
     public void setStatusCode(HttpResponseStatus status) {
         statusCode = status.getStatusCode();
     }
     
-    @Override
     public void setHeaders(HttpHeaders headers) {
         this.headers = headers;
     }
 
-    @Override
     public void setBody(String body) {
         this.body = body;        
     }

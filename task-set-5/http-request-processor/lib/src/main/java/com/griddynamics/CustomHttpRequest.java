@@ -7,7 +7,8 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.Optional;
 
-public class CustomHttpRequest extends HttpRequest implements com.griddynamics.interfaces.CustomHttpRequest {
+public class CustomHttpRequest extends HttpRequest {
+    static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
     private String body;
     private HttpHeaders headers;
     private HttpMethod method;
@@ -48,32 +49,31 @@ public class CustomHttpRequest extends HttpRequest implements com.griddynamics.i
         return headers;
     }
 
-    @Override
     public String getBody() {
         return body;
     }
 
-    @Override
     public void setBody(String body) {
         this.body = body;        
     }
 
-    @Override
     public void setHeaders(HttpHeaders headers) {
         this.headers = headers;        
     }
 
-    @Override
     public void setMethod(HttpMethod method) {
         this.method = method;        
     }
 
-    @Override
     public void setURI(URI uri) {
         this.uri = uri;        
     }
 
-    @Override
+    /**
+     * Returns request's body encoding, if present.
+     * @return {@code Optinal} caontaing body encoding as {@code String} or an {@code Optional.empty()}
+     * if no encoding is specified in the request's {@code CONTENT_ENCODING_HEADER} header.
+     */
     public Optional<String> getBodyEncoding() {
         return headers.firstValue(CONTENT_ENCODING_HEADER);
     }

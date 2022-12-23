@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.griddynamics.interfaces.BodyDecoder;
 import com.griddynamics.interfaces.BusinessLogicProcessor;
-import com.griddynamics.interfaces.CredentialsValidator;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,28 +18,27 @@ public class HttpRequestProcessor {
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
     private static final String CONTENT_TYPE = "application/json";
     private static final String AUTHORIZATION_DEFAULT_HEADER = "Authorization";
+    private static final Pattern AUTH_PATTERN = Pattern.compile("(?<username>\\w+):(?<password>\\w+)");
     
     private final List<HttpMethod> allowedMethods;
-    private final CredentialsValidator credValidator;
     private final BodyDecoder bodyDecoder;
     private final BusinessLogicProcessor blg;
     private String authenticationHeaderName;
 
     private CustomHttpRequest request;
-    private Credentials credentials;
+    private String username;
 
-    public HttpRequestProcessor(List<HttpMethod> allowedMethods, CredentialsValidator credValidator, BodyDecoder bodyDecoder,
+    public HttpRequestProcessor(List<HttpMethod> allowedMethods, BodyDecoder bodyDecoder,
     BusinessLogicProcessor blp, String authenticationHeaderName) {
         this.allowedMethods = allowedMethods;
-        this.credValidator = credValidator;
         this.bodyDecoder = bodyDecoder;
         this.blg = blp;
         this.authenticationHeaderName = authenticationHeaderName;
     }
 
-    public HttpRequestProcessor(List<HttpMethod> allowedMethods, CredentialsValidator credValidator, BodyDecoder bodyDecoder,
+    public HttpRequestProcessor(List<HttpMethod> allowedMethods, BodyDecoder bodyDecoder,
     BusinessLogicProcessor blp) {
-        this(allowedMethods, credValidator, bodyDecoder, blp, AUTHORIZATION_DEFAULT_HEADER);
+        this(allowedMethods, bodyDecoder, blp, AUTHORIZATION_DEFAULT_HEADER);
     }
 
     public HttpResponse<String> process(CustomHttpRequest request) {
@@ -46,7 +46,7 @@ public class HttpRequestProcessor {
         CustomHttpResponse response = new CustomHttpResponse(request);
 
         // validate request parameters
-        if (!validateAndAcquireCredentials()) {
+        if (!validateCredentials()) {
             response.setStatusCode(HttpResponseStatus.UNAUTHORIZED);
             return response;
         }
@@ -69,7 +69,7 @@ public class HttpRequestProcessor {
         log.info("Method: " + request.method());
         log.info("URI: " + request.uri().toASCIIString());
         log.info("Body: " + request.getBody());
-        log.info("Username: " + credentials.getUsername());
+        log.info("Username: " + username);
         
         // apply business logic
         try {
@@ -89,17 +89,26 @@ public class HttpRequestProcessor {
         return allowedMethods.contains(HttpMethod.mapNameToEnum(request.method()));
     }
 
-    private boolean validateAndAcquireCredentials() {
+    private boolean validateCredentials() {
+        // check if present
         Optional<String> auth = request.headers().firstValue(authenticationHeaderName);
         if (auth.isEmpty()) {
             return false;
         }
+        // check if base64
+        String decodedAuth;
         try {
-            credentials = credValidator.checkCredentials(Arrays.toString(Base64.getDecoder().decode(auth.get())));
-            return credentials.isAuthenticated();
+            decodedAuth = Arrays.toString(Base64.getDecoder().decode(auth.get()));
         } catch (IllegalArgumentException illegalArgumentException) { // if auth was not base64
             return false;
         }
+        // check if matches pattern
+        Matcher matcher = AUTH_PATTERN.matcher(decodedAuth);
+        if (!matcher.find()) {
+            return false;
+        }
+        username = matcher.group(0);
+        return true;
     }
 
     public void setAuthenticationHeaderName(String name) {

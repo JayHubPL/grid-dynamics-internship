@@ -7,6 +7,9 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.Optional;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class CustomHttpRequest extends HttpRequest {
     static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
     private String body;

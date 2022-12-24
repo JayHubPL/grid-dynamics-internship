@@ -10,17 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 public class TimingDynamicProxy implements InvocationHandler {
 
     private final Object target;
-    private final List<String> measuredMethods;
+    private final List<String> measuredMethodsNames;
 
     public TimingDynamicProxy(Object target, List<String> measuredMethodsNames) {
         this.target = target;
-        measuredMethods = measuredMethodsNames;
+        this.measuredMethodsNames = measuredMethodsNames;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
-        if (measuredMethods.contains(methodName)) {
+        if (measuredMethodsNames.contains(methodName)) {
             long startTime = System.nanoTime();
             Object result = method.invoke(target, args);
             long elapsed = System.nanoTime() - startTime;

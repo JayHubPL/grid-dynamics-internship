@@ -1,7 +1,8 @@
 package com.griddynamics.interfaces;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import com.griddynamics.CustomHttpRequest;
 
 public interface BusinessLogicProcessor {
     
@@ -10,6 +11,6 @@ public interface BusinessLogicProcessor {
      * @param request an HTTP request to have business logic apllied to it
      * @return an HTTP response
      */
-    HttpResponse<String> applyLogic(HttpRequest request);
+    HttpResponse<String> applyLogic(CustomHttpRequest request);
 
 }

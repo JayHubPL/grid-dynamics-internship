@@ -1,7 +1,6 @@
 package com.griddynamics;
 
 import java.net.http.HttpResponse;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -98,7 +97,7 @@ public class HttpRequestProcessor {
         // check if base64
         String decodedAuth;
         try {
-            decodedAuth = Arrays.toString(Base64.getDecoder().decode(auth.get()));
+            decodedAuth = new String(Base64.getDecoder().decode(auth.get()));
         } catch (IllegalArgumentException illegalArgumentException) { // if auth was not base64
             return false;
         }
@@ -107,7 +106,7 @@ public class HttpRequestProcessor {
         if (!matcher.find()) {
             return false;
         }
-        username = matcher.group(0);
+        username = matcher.group(1);
         return true;
     }
 

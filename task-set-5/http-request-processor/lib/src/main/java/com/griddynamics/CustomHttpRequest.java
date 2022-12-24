@@ -74,7 +74,7 @@ public class CustomHttpRequest extends HttpRequest {
 
     /**
      * Returns request's body encoding, if present.
-     * @return {@code Optinal} caontaing body encoding as {@code String} or an {@code Optional.empty()}
+     * @return {@code Optinal} containing body encoding as {@code String} or an {@code Optional.empty()}
      * if no encoding is specified in the request's {@code CONTENT_ENCODING_HEADER} header.
      */
     public Optional<String> getBodyEncoding() {

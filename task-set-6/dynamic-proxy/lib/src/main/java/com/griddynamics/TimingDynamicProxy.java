@@ -4,18 +4,15 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@AllArgsConstructor
 public class TimingDynamicProxy implements InvocationHandler {
 
     private final Object target;
     private final List<String> measuredMethodsNames;
-
-    public TimingDynamicProxy(Object target, List<String> measuredMethodsNames) {
-        this.target = target;
-        this.measuredMethodsNames = measuredMethodsNames;
-    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

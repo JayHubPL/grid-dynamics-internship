@@ -15,9 +15,11 @@ public class CustomHttpResponse implements HttpResponse<String> {
     private HttpResponseStatus statusCode;
     private String body;
 
-    public CustomHttpResponse(HttpRequest request) {
+    public CustomHttpResponse(CustomHttpRequest request) {
         this.request = request;
         statusCode = HttpResponseStatus.OK;
+        headers = request.headers();
+        body = request.getBody();
     }
 
     @Override
